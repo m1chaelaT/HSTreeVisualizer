@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <title>HS Tree Visualizer</title>
+
+  <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --------- TOOLBAR --------- */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      background: #f5f5f5;
+      border-bottom: 1px solid #ccc;
+      gap: 8px;
+    }
+
+    .toolbar .spacer {
+      flex-grow: 1;
+    }
+
+    /* --------- MAIN --------- */
+    .main {
+      flex-grow: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #cy {
+      flex-grow: 1;
+    }
+
+    /* --------- INFO PANEL --------- */
+    #infoPanel {
+      width: 320px;
+      min-width: 320px;
+      height: 100%;
+      background: #fafafa;
+      border-left: 1px solid #ccc;
+      padding: 10px;
+      position: absolute;
+      right: 0;
+      top: 0;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      overflow-y: auto;
+    }
+
+    #infoPanel.open {
+      transform: translateX(0);
+    }
+
+    #infoPanel h3 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <input type="file" id="fileInput" />
+    <button id="showFullTree">Zobraziť celý strom</button>
+    <button id="filterExplanations">Len cesty k explanations</button>
+
+    <div class="spacer"></div>
+
+    <button id="panelToggleBtn">ℹ Info</button>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div id="cy"></div>
+
+    <div id="infoPanel">
+      <h3>Informácie o uzle</h3>
+      <div id="infoContent">
+        Pravým klikom na uzol zobrazíš informácie.
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
