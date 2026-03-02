@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
           style: {
             label: "data(label)",
             "text-wrap": "wrap",
-            "text-max-width": "180px",
+            "text-max-width": "220px",
             "text-valign": "center",
             "text-halign": "center",
             padding: "10px",
@@ -89,7 +89,10 @@ document.addEventListener("DOMContentLoaded", () => {
             "background-color": "#e3f2fd",
             "border-width": 1,
             "border-color": "#555",
-            "font-size": "10px"
+            "font-size": "10px",
+
+            width: "label",
+            height: "label"
           }
         },
         {
