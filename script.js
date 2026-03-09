@@ -124,15 +124,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       ],
       layout: {
-        name: "breadthfirst",
-        directed: true,
-        spacingFactor: 1.4,
+        name: "dagre",
+        rankDir: "TB",
+        nodeSep: 50,   
+        edgeSep: 10,   
+        rankSep: 100,  
         padding: 30
       }
     });
 
     explanationFilterActive = false;
     addInteractions();
+
+    // --- ONTOLOGY DISPLAY ---
+    const ontologyDiv = document.getElementById("ontologyContent");
+    if (tree.ontology) {
+      const tboxHTML = tree.ontology.tbox ? `<b>TBox:</b><br>${tree.ontology.tbox.join("<br>")}` : "";
+      const obsHTML = tree.ontology.observations ? `<br><b>Observations:</b><br>${tree.ontology.observations.join("<br>")}` : "";
+      ontologyDiv.innerHTML = tboxHTML + obsHTML;
+    } else {
+      ontologyDiv.innerHTML = "Žiadne dáta.";
+    }
   }
 
   /* INTERACTIONS - left/right click */
@@ -203,4 +215,22 @@ document.addEventListener("DOMContentLoaded", () => {
     cy.edges().removeClass("hidden");
   }
 
+});
+
+document.getElementById("centerCanvas").addEventListener("click", () => {
+  if (cy) cy.center();
+});
+
+document.getElementById("zoomIn").addEventListener("click", () => {
+  if (cy) {
+    cy.zoom(cy.zoom() * 1.2);
+    cy.center();
+  }
+});
+
+document.getElementById("zoomOut").addEventListener("click", () => {
+  if (cy) {
+    cy.zoom(cy.zoom() / 1.2);
+    cy.center();
+  }
 });

@@ -50,3 +50,33 @@ body {
   font-size: 14px;
   overflow-y: auto;
 }
+#ontologyContent, #infoContent {
+  max-height: 45%; /* každá sekcia približne polovica */
+  overflow-y: auto;
+}
+
+.canvasControls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(245, 245, 245, 0.9);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  display: flex;
+  gap: 6px;
+  z-index: 1000; /* aby bola nad canvasom */
+}
+
+.canvasControls button {
+  cursor: pointer;
+  padding: 4px 8px;
+  font-weight: bold;
+  border: 1px solid #888;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+}
+
+.canvasControls button:hover {
+  background-color: #e0e0e0;
+}

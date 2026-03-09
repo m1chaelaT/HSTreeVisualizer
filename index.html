@@ -5,6 +5,8 @@
   <title>HS Tree Visualizer</title>
 
   <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/dagre/dist/dagre.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-dagre/cytoscape-dagre.js"></script>
 
   <style>
     body {
@@ -84,6 +86,11 @@
     <div id="cy"></div>
 
     <div id="infoPanel">
+      <h3>Ontológia</h3>
+      <div id="ontologyContent">
+        Žiadne dáta.
+      </div>
+      <hr>
       <h3>Informácie o uzle</h3>
       <div id="infoContent">
         Pravým klikom na uzol zobrazíš informácie.
@@ -91,6 +98,11 @@
     </div>
   </div>
 
+  <div class="canvasControls">
+  <button id="centerCanvas">Center</button>
+  <button id="zoomIn">+</button>
+  <button id="zoomOut">-</button>
+</div>
   <script src="script.js" defer></script>
 </body>
 </html>
