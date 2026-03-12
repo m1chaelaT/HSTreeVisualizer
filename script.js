@@ -65,7 +65,8 @@ document.addEventListener("DOMContentLoaded", () => {
           id: "e" + e.parent + "_" + e.child,
           source: "n" + e.parent,
           target: "n" + e.child,
-          label: e.label
+          label: e.label,
+          pruned: e.pruned
         }
       });
     });
