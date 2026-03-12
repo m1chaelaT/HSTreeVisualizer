@@ -73,8 +73,9 @@
   <!-- TOOLBAR -->
   <div class="toolbar">
     <input type="file" id="fileInput" />
-    <button id="showFullTree">Zobraziť celý strom</button>
-    <button id="filterExplanations">Len cesty k explanations</button>
+    <button id="showFullTree">Show Full Tree</button>
+    <button id="filterExplanations">Paths to Explanations Only</button>
+    <button id="labelUpdtBtn">Hide Labels</button>
 
     <div class="spacer"></div>
 
@@ -86,14 +87,14 @@
     <div id="cy"></div>
 
     <div id="infoPanel">
-      <h3>Ontológia</h3>
-      <div id="ontologyContent">
-        Žiadne dáta.
+      <h3>Ontology</h3>
+      <div id="ontologyContent"  style="height: 50%; overflow-y: auto; padding-right: 5px;">
+        No data
       </div>
       <hr>
-      <h3>Informácie o uzle</h3>
-      <div id="infoContent">
-        Pravým klikom na uzol zobrazíš informácie.
+      <h3>Node Information</h3>
+      <div id="infoContent" style="height: 50%; overflow: hidden;">
+        Right-click on a node to see details.
       </div>
     </div>
   </div>

@@ -60,6 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     tree.edges.forEach(e => {
+
+    // normal edge
+    if (e.child !== null) {
       elements.push({
         data: {
           id: "e" + e.parent + "_" + e.child,
@@ -69,7 +72,34 @@ document.addEventListener("DOMContentLoaded", () => {
           pruned: e.pruned
         }
       });
-    });
+    }
+
+    // pruned edge (child = null)
+    else {
+      /*
+      const prunedNodeId = "p" + e.parent + "_" + e.label;
+
+      elements.push({
+        data: {
+          id: prunedNodeId,
+          label: "PRUNED\n" + (e.pruned || "")
+        },
+        classes: "pruned"
+      });
+
+      elements.push({
+        data: {
+          id: "e" + e.parent + "_" + prunedNodeId,
+          source: "n" + e.parent,
+          target: prunedNodeId,
+          label: e.label
+        }
+      });
+      */
+
+    }
+
+  });
 
     if (cy) cy.destroy();
 
@@ -116,7 +146,11 @@ document.addEventListener("DOMContentLoaded", () => {
             "curve-style": "bezier",
             "target-arrow-shape": "triangle",
             "arrow-scale": 1.2,
-            "font-size": "9px"
+            "font-size": "9px",
+            "text-background-color": "#ffffff",
+            "text-background-opacity": 1,
+            "text-background-padding": "2px",
+            "text-background-shape": "roundrectangle"
           }
         },
         {
@@ -140,9 +174,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- ONTOLOGY DISPLAY ---
     const ontologyDiv = document.getElementById("ontologyContent");
     if (tree.ontology) {
-      const tboxHTML = tree.ontology.tbox ? `<b>TBox:</b><br>${tree.ontology.tbox.join("<br>")}` : "";
-      const obsHTML = tree.ontology.observations ? `<br><b>Observations:</b><br>${tree.ontology.observations.join("<br>")}` : "";
-      ontologyDiv.innerHTML = tboxHTML + obsHTML;
+      const obsHTML = tree.ontology.observations && tree.ontology.observations.length > 0
+        ? `<b>Observations:</b><br>${tree.ontology.observations.join("<br>")}`
+        : "";
+      const tboxHTML = tree.ontology.tbox && tree.ontology.tbox.length > 0
+        ? `<br><b>TBox:</b><br>` + tree.ontology.tbox.map(line => `• ${line}`).join("<br>")
+        : "";
+      ontologyDiv.innerHTML = obsHTML + tboxHTML;
+
     } else {
       ontologyDiv.innerHTML = "Žiadne dáta.";
     }
@@ -234,4 +273,24 @@ document.getElementById("zoomOut").addEventListener("click", () => {
     cy.zoom(cy.zoom() / 1.2);
     cy.center();
   }
+});
+
+let showingIndex = false;
+
+const labelBtn = document.getElementById("labelUpdtBtn")
+labelBtn.addEventListener("click", () => {
+  cy.nodes().forEach(node => {
+    if (node.data("originalLabel") === undefined) {
+      node.data("originalLabel", node.data("label"));
+    }
+
+    if (showingIndex) {
+      node.data("label", node.data("originalLabel"));
+      labelBtn.textContent = "Hide Labels";
+    } else {
+      node.data("label",node.data("id"));
+      labelBtn.textContent = "Show Labels";
+    }
+  });
+  showingIndex = !showingIndex;
 });

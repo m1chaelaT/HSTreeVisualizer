@@ -70,7 +70,7 @@ body {
 
 .canvasControls button {
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 8px 8px 8px 8px;
   font-weight: bold;
   border: 1px solid #888;
   border-radius: 4px;
