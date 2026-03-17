@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // pruned edge (child = null)
     else {
-      /*
+      
       const prunedNodeId = "p" + e.parent + "_" + e.label;
 
       elements.push({
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
           label: e.label
         }
       });
-      */
+      
 
     }
 
@@ -156,6 +156,16 @@ document.addEventListener("DOMContentLoaded", () => {
         {
           selector: ".hidden",
           style: { display: "none" }
+        },
+        {
+          selector: "node.pruned",
+          style: {
+            "background-color": "#f8d7da",
+            "border-color": "#e57373",
+            "border-width": 2,
+            "color": "#7a1c1c",
+            "font-weight": "bold"
+          }
         }
       ],
       layout: {
@@ -173,18 +183,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- ONTOLOGY DISPLAY ---
     const ontologyDiv = document.getElementById("ontologyContent");
+    let content = `<h3>Ontology</h3>`;
+
+    if (tree.algorithm) {
+      content += `<b>Algorithm:</b> ${tree.algorithm}<br><br>`;
+    }
+
     if (tree.ontology) {
       const obsHTML = tree.ontology.observations && tree.ontology.observations.length > 0
-        ? `<b>Observations:</b><br>${tree.ontology.observations.join("<br>")}`
+        ? `<b>Observations:</b><br>${tree.ontology.observations.join("<br>")}<br><br>`
         : "";
       const tboxHTML = tree.ontology.tbox && tree.ontology.tbox.length > 0
-        ? `<br><b>TBox:</b><br>` + tree.ontology.tbox.map(line => `• ${line}`).join("<br>")
+        ? `<b>TBox:</b><br>` + tree.ontology.tbox.map(line => `• ${line}`).join("<br>")
         : "";
-      ontologyDiv.innerHTML = obsHTML + tboxHTML;
+      content += obsHTML + tboxHTML;
 
-    } else {
-      ontologyDiv.innerHTML = "Žiadne dáta.";
-    }
+    } else {content += "No data.";}
+    ontologyDiv.innerHTML = content;
   }
 
   /* INTERACTIONS - left/right click */
@@ -200,6 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const n = evt.target;
 
       infoContent.innerHTML =
+        `<h3>Node Information</h3>` +
         `<b>ID:</b> ${n.id()}<br>` +
         `<b>Label:</b><br>${n.data("label").replace(/\n/g, "<br>")}<br><br>` +
         `<b>Closed:</b> ${n.data("closed")}<br>` +
