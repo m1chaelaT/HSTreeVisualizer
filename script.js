@@ -310,3 +310,31 @@ labelBtn.addEventListener("click", () => {
   });
   showingIndex = !showingIndex;
 });
+
+let showingPruned = true;
+const prunedBtn = document.getElementById("prunnedUpdBtn");
+
+prunedBtn.addEventListener("click", () => {
+  if (!cy) return;
+
+  if (showingPruned) {
+    // skryť pruned nodes + ich edges
+    cy.nodes(".pruned").forEach(node => {
+      node.addClass("hidden");
+      node.connectedEdges().addClass("hidden");
+    });
+
+    prunedBtn.textContent = "Show pruned nodes";
+  } else {
+    // zobraziť pruned nodes + ich edges
+    cy.nodes(".pruned").forEach(node => {
+      node.removeClass("hidden");
+      node.connectedEdges().removeClass("hidden");
+    });
+
+    prunedBtn.textContent = "Hide pruned nodes";
+  }
+
+  showingPruned = !showingPruned;
+
+});
