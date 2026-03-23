@@ -129,10 +129,19 @@ document.addEventListener("DOMContentLoaded", () => {
         {
           selector: "node.explanation",
           style: {
-            "background-color": "#91dda8",
+            label: "✓",
+            "text-valign": "center",
+            "text-halign": "center",
+            "font-size": "24px",
+            "font-weight": "bold",
+            color: "#2e7d32",
+            width: 36,
+            height: 36,
+            padding: "0px",
+            shape: "round-rectangle",
+            "background-color": "#e8f5e9",
             "border-color": "#2e7d32",
-            "border-width": 2,
-            "font-weight": "bold"
+            "border-width": 2
           }
         },
         {
@@ -160,11 +169,19 @@ document.addEventListener("DOMContentLoaded", () => {
         {
           selector: "node.pruned",
           style: {
-            "background-color": "#f8d7da",
-            "border-color": "#e57373",
-            "border-width": 2,
-            "color": "#7a1c1c",
-            "font-weight": "bold"
+            label: "✗",
+            "text-valign": "center",
+            "text-halign": "center",
+            "font-size": "24px",
+            "font-weight": "bold",
+            color: "#c62828",
+            width: 36,
+            height: 36,
+            padding: "0px",
+            shape: "round-rectangle",
+            "background-color": "#ffebee",
+            "border-color": "#c62828",
+            "border-width": 2
           }
         }
       ],
@@ -293,9 +310,15 @@ document.getElementById("zoomOut").addEventListener("click", () => {
 
 let showingIndex = false;
 
-const labelBtn = document.getElementById("labelUpdtBtn")
+const labelBtn = document.getElementById("labelUpdtBtn");
 labelBtn.addEventListener("click", () => {
+  if (!cy) return;
+
   cy.nodes().forEach(node => {
+    if (node.hasClass("explanation") || node.hasClass("pruned")) {
+      return;
+    }
+
     if (node.data("originalLabel") === undefined) {
       node.data("originalLabel", node.data("label"));
     }
@@ -304,10 +327,11 @@ labelBtn.addEventListener("click", () => {
       node.data("label", node.data("originalLabel"));
       labelBtn.textContent = "Hide Labels";
     } else {
-      node.data("label",node.data("id"));
+      node.data("label", node.data("id"));
       labelBtn.textContent = "Show Labels";
     }
   });
+
   showingIndex = !showingIndex;
 });
 
