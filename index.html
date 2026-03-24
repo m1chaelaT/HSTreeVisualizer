@@ -71,18 +71,38 @@
 <body>
 
   <!-- TOOLBAR -->
-  <div class="toolbar">
-    <input type="file" id="fileInput" />
-    <button id="showFullTree">Show Full Tree</button>
-    <button id="filterExplanations">Paths to Explanations Only</button>
-    <button id="labelUpdtBtn">Hide Labels</button>
-    <button id ="prunnedUpdBtn">Hide prunned nodes</button>
-    <button id ="MXPExplenationsBtn" style="display:none;">Hide initial MXP explenations</button>
+  <!-- MAIN TOOLBAR -->
+<div class="toolbar">
+  <input type="file" id="fileInput" />
 
-    <div class="spacer"></div>
+  <div class="spacer"></div>
 
-    <button id="panelToggleBtn">ℹ Info</button>
-  </div>
+  <button id="modeToggleBtn">Switch to Step Mode</button>
+</div>
+
+<!-- SECONDARY TOOLBAR - TREE MODE -->
+<div class="toolbar" id="treeToolbar">
+  <button id="showFullTree">Show Full Tree</button>
+  <button id="filterExplanations">Paths to Explanations Only</button>
+  <button id="labelUpdtBtn">Hide Labels</button>
+  <button id="prunnedUpdBtn">Hide prunned nodes</button>
+  <button id="MXPExplenationsBtn" style="display:none;">Hide initial MXP explenations</button>
+
+  <div class="spacer"></div>
+
+  <button id="panelToggleBtn">ℹ Info</button>
+</div>
+
+<!-- SECONDARY TOOLBAR - STEP MODE -->
+<div class="toolbar" id="stepToolbar" style="display: none;">
+  
+  <button id="stepBack">◀ Step Back</button>
+  <button id="stepForward">Step Forward ▶</button>
+
+  <div class="spacer"></div>
+
+  <button id="panelToggleBtn">ℹ Info</button>
+</div>
 
   <!-- MAIN -->
   <div class="main">

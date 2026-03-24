@@ -9,12 +9,59 @@ function getInitialMxpExplanationNodes(tree) {
   if (tree.algorithm !== "MHS_MXP") return [];
 
   return tree.nodes.filter(node =>
-    node.depth === 1 && node.isExplanation === true
+    node.depth === 1 && readExplanationValue(node.isExplanation)
   );
 }
 
 function isVisualRootNode(node) {
   return node.data("depth") === 1 && !node.data("isExplanation");
+}
+
+function readExplanationValue(explanation) {
+  if (typeof explanation === "boolean") return explanation;
+
+  if (explanation && typeof explanation === "object") {
+    if (explanation.isExplanation === true) return true;
+    if (explanation.isExplenation === true) return true;
+    return false;
+  }
+
+  return false;
+}
+
+function readClosedValue(closed) {
+  if (typeof closed === "boolean") return closed;
+  if (typeof closed === "string") return closed === "closed";
+
+  if (closed && typeof closed === "object") {
+    return closed.closed === true;
+  }
+
+  return false;
+}
+
+function readPrunedText(pruned) {
+  if (typeof pruned === "string") return pruned;
+
+  if (pruned && typeof pruned === "object") {
+    return String(pruned.pruned || "");
+  }
+
+  return "";
+}
+
+function readStepValue(obj) {
+  if (obj && typeof obj === "object" && obj.step !== undefined) {
+    return obj.step;
+  }
+  return null;
+}
+
+function readTypeValue(obj) {
+  if (obj && typeof obj === "object" && obj.type !== undefined) {
+    return obj.type;
+  }
+  return null;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -29,9 +76,23 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("fileInput").addEventListener("change", handleFile);
   document.getElementById("filterExplanations").addEventListener("click", showExplanations);
   document.getElementById("showFullTree").addEventListener("click", showFullTree);
+  function toggleInfoPanel(forceOpen = false) {
+    if (forceOpen) {
+      infoPanel.classList.add("open");
+    } else {
+      infoPanel.classList.toggle("open");
+    }
+  }
   document.getElementById("panelToggleBtn").addEventListener("click", () => {
-    infoPanel.classList.toggle("open");
+    toggleInfoPanel();
   });
+
+  const stepInfoBtn = document.getElementById("panelToggleBtnStep");
+  if (stepInfoBtn) {
+    stepInfoBtn.addEventListener("click", () => {
+      toggleInfoPanel();
+    });
+  }
 
   mxpBtn.addEventListener("click", toggleInitialMxpExplanations);
   prunedBtn.addEventListener("click", togglePrunedNodes);
@@ -82,6 +143,35 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.readAsText(file);
   }
 
+  let stepMode = false;
+
+  document.getElementById("modeToggleBtn").addEventListener("click", () => {
+    stepMode = !stepMode;
+
+    const treeToolbar = document.getElementById("treeToolbar");
+    const stepToolbar = document.getElementById("stepToolbar");
+    const btn = document.getElementById("modeToggleBtn");
+
+    if (stepMode) {
+      treeToolbar.style.display = "none";
+      stepToolbar.style.display = "flex";
+      btn.textContent = "Switch to Tree Mode";
+
+      if (cy) {
+        cy.elements().remove();
+      }
+
+    } else {
+      treeToolbar.style.display = "flex";
+      stepToolbar.style.display = "none";
+      btn.textContent = "Switch to Step Mode";
+
+      if (currentTree) {
+        drawTree(currentTree);
+      }
+    }
+  });
+
   function drawTree(tree) {
     currentTree = tree;
 
@@ -103,25 +193,47 @@ document.addEventListener("DOMContentLoaded", () => {
     const elements = [];
 
     tree.nodes.forEach(n => {
+      const explanationValue = readExplanationValue(n.isExplanation);
+      const closedValue = readClosedValue(n.closed);
+
+      const labelText = Array.isArray(n.label)
+        ? n.label.join("\n")
+        : String(n.label ?? "");
+
+      const pathValue = Array.isArray(n.path) ? n.path : [];
+
       const isInitialMxpExplanation =
         tree.algorithm === "MHS_MXP" &&
         n.depth === 1 &&
-        n.isExplanation === true;
+        explanationValue === true;
 
-      let classes = [];
-      if (n.isExplanation) classes.push("explanation");
+      const classes = [];
+      if (explanationValue) classes.push("explanation");
       if (isInitialMxpExplanation) classes.push("initial-mxp");
 
       elements.push({
         data: {
           id: "n" + n.id,
-          label: n.label.join("\n"),
-          originalLabel: n.label.join("\n"),
-          closed: n.closed,
-          depth: n.depth,
-          isExplanation: n.isExplanation,
-          path: n.path || [],
           originalId: n.id,
+          label: labelText,
+          originalLabel: labelText,
+          closed: closedValue,
+          isExplanation: explanationValue,
+          depth: Number(n.depth ?? 0),
+          path: pathValue,
+
+          createdStep: readStepValue(n.created),
+          createdType: readTypeValue(n.created),
+
+          processedStep: readStepValue(n.processed),
+          processedType: readTypeValue(n.processed),
+
+          explanationStep: readStepValue(n.isExplanation),
+          explanationType: readTypeValue(n.isExplanation),
+
+          closedStep: readStepValue(n.closed),
+          closedType: readTypeValue(n.closed),
+
           isInitialMxpExplanation: isInitialMxpExplanation
         },
         classes: classes.join(" ")
@@ -129,23 +241,36 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     tree.edges.forEach(e => {
-      if (e.child !== null) {
+      const prunedText = readPrunedText(e.pruned);
+
+      if (e.child !== null && e.child !== undefined) {
         elements.push({
           data: {
             id: "e" + e.parent + "_" + e.child,
             source: "n" + e.parent,
             target: "n" + e.child,
-            label: e.label,
-            pruned: e.pruned
+            label: String(e.label ?? ""),
+            pruned: prunedText,
+            createdStep: readStepValue(e.created),
+            createdType: readTypeValue(e.created),
+            prunedStep: readStepValue(e.pruned),
+            prunedType: readTypeValue(e.pruned)
           }
         });
       } else {
-        const prunedNodeId = "p" + e.parent + "_" + e.label;
+        const safeLabel = String(e.label ?? "").replace(/[^a-zA-Z0-9_]/g, "_");
+        const prunedNodeId = "p" + e.parent + "_" + safeLabel;
 
         elements.push({
           data: {
             id: prunedNodeId,
-            label: "PRUNED\n" + (e.pruned || "")
+            label: "✗",
+            originalLabel: prunedText || "PRUNED",
+            parentId: e.parent,
+            edgeLabel: String(e.label ?? ""),
+            pruned: prunedText,
+            prunedStep: readStepValue(e.pruned),
+            prunedType: readTypeValue(e.pruned)
           },
           classes: "pruned"
         });
@@ -155,7 +280,10 @@ document.addEventListener("DOMContentLoaded", () => {
             id: "e" + e.parent + "_" + prunedNodeId,
             source: "n" + e.parent,
             target: prunedNodeId,
-            label: e.label
+            label: String(e.label ?? ""),
+            pruned: prunedText,
+            prunedStep: readStepValue(e.pruned),
+            prunedType: readTypeValue(e.pruned)
           }
         });
       }
@@ -186,23 +314,23 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         },
         {
-          selector: "node.explanation",
-          style: {
-            label: "✓",
-            "text-valign": "center",
-            "text-halign": "center",
-            "font-size": "24px",
-            "font-weight": "bold",
-            color: "#2e7d32",
-            width: 36,
-            height: 36,
-            padding: "0px",
-            shape: "round-rectangle",
-            "background-color": "#e8f5e9",
-            "border-color": "#2e7d32",
-            "border-width": 2
-          }
-        },
+  selector: "node.explanation",
+  style: {
+    label: "✓",
+    "text-valign": "center",
+    "text-halign": "center",
+    "font-size": "24px",
+    "font-weight": "bold",
+    color: "#2e7d32",
+    width: 36,
+    height: 36,
+    padding: "0px",
+    shape: "round-rectangle",
+    "background-color": "#e8f5e9",
+    "border-color": "#2e7d32",
+    "border-width": 2
+  }
+},
         {
           selector: "node.initial-mxp",
           style: {
@@ -224,7 +352,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         },
         {
-          selector: 'node[closed="closed"]',
+          selector: "node[closed = true]",
           style: {
             "border-style": "dashed"
           }
@@ -313,16 +441,32 @@ document.addEventListener("DOMContentLoaded", () => {
     cy.on("cxttap", "node", evt => {
       const n = evt.target;
 
+      if (n.hasClass("pruned")) {
+        let html =
+          `<h3>Pruned Node Information</h3>` +
+          `<b>ID:</b> ${n.id()}<br>` +
+          `<b>Edge label:</b> ${n.data("edgeLabel") || "-"}<br>` +
+          `<b>Reason:</b> ${n.data("pruned") || "-"}<br>`;
+
+        if (n.data("parentId") !== undefined) {
+          html += `<b>Parent:</b> n${n.data("parentId")}<br>`;
+        }
+
+        infoContent.innerHTML = html;
+        toggleInfoPanel(true);
+        return;
+      }
+
       let html =
         `<h3>Node Information</h3>` +
         `<b>ID:</b> ${n.id()}<br>` +
-        `<b>Label:</b><br>${String(n.data("originalLabel") || n.data("label")).replace(/\n/g, "<br>")}<br><br>` +
-        `<b>Closed:</b> ${n.data("closed")}<br>` +
-        `<b>Explanation:</b> ${n.data("isExplanation")}<br>` +
+        `<b>Label:</b><br>${String(n.data("originalLabel") || "").replace(/\n/g, "<br>")}<br><br>` +
+        `<b>Closed:</b> ${n.data("closed") === true ? "true" : "false"}<br>` +
+        `<b>Explanation:</b> ${n.data("isExplanation") === true ? "true" : "false"}<br>` +
         `<b>Depth:</b> ${n.data("depth")}<br>`;
 
       const path = n.data("path");
-      if (path && path.length > 0) {
+      if (Array.isArray(path) && path.length > 0) {
         html += `<br><b>Path:</b><br>${path.join("<br>")}<br>`;
       }
 
@@ -332,7 +476,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (mxpNodes.length > 0) {
           html += `<br><h4>Initial MXP possible explanations</h4>`;
           mxpNodes.forEach(node => {
-            html += `• ${node.label.join(", ")}<br>`;
+            const lbl = Array.isArray(node.label) ? node.label.join(", ") : String(node.label ?? "");
+            html += `• ${lbl}<br>`;
           });
         }
       }
@@ -454,9 +599,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!cy) return;
 
     cy.nodes().forEach(node => {
-      if (node.hasClass("explanation") || node.hasClass("pruned")) {
-        return;
-      }
+      if (
+      node.hasClass("pruned") ||
+      node.data("isExplanation") === true ||
+      node.hasClass("initial-mxp")
+    ) {
+      return;
+    }
 
       if (showingIndex) {
         node.data("label", node.data("originalLabel"));
