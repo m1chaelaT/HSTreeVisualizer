@@ -1,0 +1,97 @@
+{
+  "algorithm" : "MHS_MXP",
+  "ontology" : {
+    "tbox" : [ "Cavity ⊑ SensitiveTeeth", "DentalTrauma ⊑ Toothache", "DrankColdDrink ⊓ SensitiveTeeth ⊑ Toothache" ],
+    "observations" : [ "john : ¬Toothache" ]
+  },
+  "nodes" : [ {
+    "id" : 0,
+    "depth" : 1,
+    "path" : [ "Cavity(john)", "DrankColdDrink(john)" ],
+    "label" : [ "Cavity(john)", "DrankColdDrink(john)" ],
+    "isExplanation" : {
+      "isExplanation" : true,
+      "step" : 1,
+      "type" : "POSSIBLE_EXPLANATION"
+    },
+    "closed" : "closed"
+  }, {
+    "id" : 1,
+    "depth" : 1,
+    "path" : [ "DentalTrauma(john)" ],
+    "label" : [ "DentalTrauma(john)" ],
+    "isExplanation" : {
+      "isExplanation" : true,
+      "step" : 2,
+      "type" : "POSSIBLE_EXPLANATION"
+    },
+    "closed" : "closed"
+  }, {
+    "id" : 2,
+    "depth" : 1,
+    "path" : [ ],
+    "label" : [ "DrankColdDrink(john)", "DentalTrauma(john)" ],
+    "isExplanation" : {
+      "isExplanation" : false
+    },
+    "closed" : "none",
+    "processed" : {
+      "step" : 3,
+      "type" : "PROCESSING_NODE"
+    }
+  }, {
+    "id" : 3,
+    "depth" : 2,
+    "path" : [ "DrankColdDrink(john)" ],
+    "label" : [ "DentalTrauma(john)", "Cavity(john)", "SensitiveTeeth(john)" ],
+    "isExplanation" : {
+      "isExplanation" : false
+    },
+    "closed" : "closed",
+    "created" : {
+      "step" : 4,
+      "type" : "NODE_CREATED"
+    },
+    "processed" : {
+      "step" : 5,
+      "type" : "PROCESSING_NODE"
+    }
+  }, {
+    "id" : 4,
+    "depth" : 3,
+    "path" : [ "DrankColdDrink(john)", "SensitiveTeeth(john)" ],
+    "label" : [ "DrankColdDrink(john)", "SensitiveTeeth(john)" ],
+    "isExplanation" : {
+      "isExplanation" : true,
+      "step" : 6,
+      "type" : "POSSIBLE_EXPLANATION"
+    },
+    "closed" : "closed",
+    "conflictSet" : [ "SensitiveTeeth(john)" ]
+  } ],
+  "edges" : [ {
+    "parent" : 2,
+    "child" : 3,
+    "label" : "DrankColdDrink(john)",
+    "pruned" : ""
+  }, {
+    "parent" : 2,
+    "child" : null,
+    "label" : "DentalTrauma(john)",
+    "pruned" : "NON-MINIMAL EXPLANATION!"
+  }, {
+    "parent" : 3,
+    "child" : null,
+    "label" : "DentalTrauma(john)",
+    "pruned" : "NON-MINIMAL EXPLANATION!"
+  }, {
+    "parent" : 3,
+    "child" : null,
+    "label" : "Cavity(john)",
+    "pruned" : "NON-MINIMAL EXPLANATION!"
+  }, {
+    "parent" : 3,
+    "child" : 4,
+    "label" : "SensitiveTeeth(john)"
+  } ]
+}

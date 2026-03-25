@@ -1,0 +1,241 @@
+{
+  "algorithm" : "MHS",
+  "ontology" : {
+    "tbox" : [ "Cavity ⊑ SensitiveTeeth", "DentalTrauma ⊑ Toothache", "DrankColdDrink ⊓ SensitiveTeeth ⊑ Toothache" ],
+    "observations" : [ "john : ¬Toothache" ]
+  },
+  "nodes" : [ {
+    "id" : 0,
+    "depth" : 1,
+    "path" : [ ],
+    "label" : [ "DrankColdDrink(john)", "DentalTrauma(john)", "Cavity(john)", "SensitiveTeeth(john)" ],
+    "isExplanation" : {
+      "isExplanation" : false
+    },
+    "closed" : {
+      "closed" : true,
+      "step" : 7,
+      "type" : "CLOSING_NODE"
+    },
+    "processed" : {
+      "step" : 1,
+      "type" : "PROCESSING_NODE"
+    }
+  }, {
+    "id" : 1,
+    "depth" : 2,
+    "path" : [ "DrankColdDrink(john)" ],
+    "label" : [ "DentalTrauma(john)", "Cavity(john)", "SensitiveTeeth(john)" ],
+    "isExplanation" : {
+      "isExplanation" : false
+    },
+    "closed" : {
+      "closed" : true,
+      "step" : 21,
+      "type" : "CLOSING_NODE"
+    },
+    "created" : {
+      "step" : 2,
+      "type" : "NODE_CREATED"
+    },
+    "processed" : {
+      "step" : 12,
+      "type" : "PROCESSING_NODE"
+    }
+  }, {
+    "id" : 2,
+    "depth" : 2,
+    "path" : [ "DentalTrauma(john)" ],
+    "label" : [ "DentalTrauma(john)" ],
+    "isExplanation" : {
+      "isExplanation" : true,
+      "step" : 4,
+      "type" : "POSSIBLE_EXPLANATION"
+    },
+    "closed" : {
+      "closed" : true,
+      "step" : 5,
+      "type" : "CLOSING_NODE"
+    }
+  }, {
+    "id" : 3,
+    "depth" : 2,
+    "path" : [ "Cavity(john)" ],
+    "label" : [ "DrankColdDrink(john)", "DentalTrauma(john)" ],
+    "isExplanation" : {
+      "isExplanation" : false
+    },
+    "closed" : {
+      "closed" : false
+    },
+    "created" : {
+      "step" : 8,
+      "type" : "NODE_CREATED"
+    },
+    "processed" : {
+      "step" : 22,
+      "type" : "PROCESSING_NODE"
+    }
+  }, {
+    "id" : 4,
+    "depth" : 2,
+    "path" : [ "SensitiveTeeth(john)" ],
+    "label" : [ "DrankColdDrink(john)", "DentalTrauma(john)" ],
+    "isExplanation" : {
+      "isExplanation" : false
+    },
+    "closed" : {
+      "closed" : false
+    },
+    "created" : {
+      "step" : 10,
+      "type" : "NODE_CREATED"
+    },
+    "processed" : {
+      "step" : 25,
+      "type" : "PROCESSING_NODE"
+    }
+  }, {
+    "id" : 5,
+    "depth" : 3,
+    "path" : [ "DrankColdDrink(john)", "Cavity(john)" ],
+    "label" : [ "DrankColdDrink(john)", "Cavity(john)" ],
+    "isExplanation" : {
+      "isExplanation" : true,
+      "step" : 14,
+      "type" : "POSSIBLE_EXPLANATION"
+    },
+    "closed" : {
+      "closed" : true,
+      "step" : 15,
+      "type" : "CLOSING_NODE"
+    }
+  }, {
+    "id" : 6,
+    "depth" : 3,
+    "path" : [ "DrankColdDrink(john)", "SensitiveTeeth(john)" ],
+    "label" : [ "DrankColdDrink(john)", "SensitiveTeeth(john)" ],
+    "isExplanation" : {
+      "isExplanation" : true,
+      "step" : 18,
+      "type" : "POSSIBLE_EXPLANATION"
+    },
+    "closed" : {
+      "closed" : true,
+      "step" : 19,
+      "type" : "CLOSING_NODE"
+    }
+  } ],
+  "edges" : [ {
+    "parent" : 0,
+    "child" : 1,
+    "label" : "DrankColdDrink(john)",
+    "created" : {
+      "step" : 3,
+      "type" : "EDGE_CREATED"
+    },
+    "pruned" : {
+      "pruned" : ""
+    }
+  }, {
+    "parent" : 0,
+    "child" : 2,
+    "label" : "DentalTrauma(john)",
+    "created" : {
+      "step" : 6,
+      "type" : "EDGE_CREATED"
+    },
+    "pruned" : {
+      "pruned" : ""
+    }
+  }, {
+    "parent" : 0,
+    "child" : 3,
+    "label" : "Cavity(john)",
+    "created" : {
+      "step" : 9,
+      "type" : "EDGE_CREATED"
+    },
+    "pruned" : {
+      "pruned" : ""
+    }
+  }, {
+    "parent" : 0,
+    "child" : 4,
+    "label" : "SensitiveTeeth(john)",
+    "created" : {
+      "step" : 11,
+      "type" : "EDGE_CREATED"
+    },
+    "pruned" : {
+      "pruned" : ""
+    }
+  }, {
+    "parent" : 1,
+    "child" : null,
+    "label" : "DentalTrauma(john)",
+    "pruned" : {
+      "pruned" : "NON-MINIMAL EXPLANATION!",
+      "step" : 13,
+      "type" : "NONMINIMAL_EXPLANATION"
+    }
+  }, {
+    "parent" : 1,
+    "child" : 5,
+    "label" : "Cavity(john)",
+    "created" : {
+      "step" : 16,
+      "type" : "EDGE_CREATED"
+    },
+    "pruned" : {
+      "pruned" : ""
+    }
+  }, {
+    "parent" : 1,
+    "child" : 6,
+    "label" : "SensitiveTeeth(john)",
+    "created" : {
+      "step" : 20,
+      "type" : "EDGE_CREATED"
+    },
+    "pruned" : {
+      "pruned" : ""
+    }
+  }, {
+    "parent" : 3,
+    "child" : null,
+    "label" : "DrankColdDrink(john)",
+    "pruned" : {
+      "pruned" : "PRUNED PATH!",
+      "step" : 23,
+      "type" : "EDGE_PRUNED"
+    }
+  }, {
+    "parent" : 3,
+    "child" : null,
+    "label" : "DentalTrauma(john)",
+    "pruned" : {
+      "pruned" : "NON-MINIMAL EXPLANATION!",
+      "step" : 24,
+      "type" : "NONMINIMAL_EXPLANATION"
+    }
+  }, {
+    "parent" : 4,
+    "child" : null,
+    "label" : "DrankColdDrink(john)",
+    "pruned" : {
+      "pruned" : "PRUNED PATH!",
+      "step" : 26,
+      "type" : "EDGE_PRUNED"
+    }
+  }, {
+    "parent" : 4,
+    "child" : null,
+    "label" : "DentalTrauma(john)",
+    "pruned" : {
+      "pruned" : "NON-MINIMAL EXPLANATION!",
+      "step" : 27,
+      "type" : "NONMINIMAL_EXPLANATION"
+    }
+  } ]
+}
