@@ -39,6 +39,17 @@ body {
   width: 35px;
 }
 
+#stepDescriptionBar {
+  display: none;
+  padding: 14px 18px;
+  background: #eef3ff;
+  border-bottom: 1px solid #c7d2e8;
+  font-size: 22px;
+  font-weight: bold;
+  min-height: 34px;
+  box-sizing: border-box;
+}
+
 .info-header {
   display: flex;
   justify-content: space-between;

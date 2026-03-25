@@ -101,15 +101,18 @@
     const treeToolbar = document.getElementById("treeToolbar");
     const stepToolbar = document.getElementById("stepToolbar");
     const btn = document.getElementById("modeToggleBtn");
+    const stepDescriptionBar = document.getElementById("stepDescriptionBar");
 
     if (state.stepMode) {
       treeToolbar.style.display = "none";
       stepToolbar.style.display = "flex";
       btn.textContent = "Switch to Tree Mode";
+      stepDescriptionBar.style.display = "block";
     } else {
       treeToolbar.style.display = "flex";
       stepToolbar.style.display = "none";
       btn.textContent = "Switch to Step Mode";
+      stepDescriptionBar.style.display = "none";
     }
   }
 

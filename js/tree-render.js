@@ -248,16 +248,8 @@
       let html =
         `<h3>Pruned Node Information</h3>` +
         `<b>ID:</b> ${n.id()}<br>` +
-        `<b>Edge label:</b> ${n.data("edgeLabel") || "-"}<br>` +
+        `<b>Edge label:</b><br> ${n.data("edgeLabel") || "-"}<br>` +
         `<b>Reason:</b> ${n.data("pruned") || "-"}<br>`;
-
-      if (n.data("prunedType")) {
-        html += `<b>Type:</b> ${n.data("prunedType")}<br>`;
-      }
-
-      if (n.data("prunedStep") !== null && n.data("prunedStep") !== undefined) {
-        html += `<b>Step:</b> ${n.data("prunedStep")}<br>`;
-      }
 
       if (n.data("parentId") !== undefined) {
         html += `<b>Parent:</b> n${n.data("parentId")}<br>`;
@@ -278,30 +270,6 @@
     const path = n.data("path");
     if (Array.isArray(path) && path.length > 0) {
       html += `<br><b>Path:</b><br>${path.join("<br>")}<br>`;
-    }
-
-    if (n.data("createdStep") !== null && n.data("createdStep") !== undefined) {
-      html += `<br><b>Created:</b> step ${n.data("createdStep")}`;
-      if (n.data("createdType")) html += ` (${n.data("createdType")})`;
-      html += `<br>`;
-    }
-
-    if (n.data("processedStep") !== null && n.data("processedStep") !== undefined) {
-      html += `<b>Processed:</b> step ${n.data("processedStep")}`;
-      if (n.data("processedType")) html += ` (${n.data("processedType")})`;
-      html += `<br>`;
-    }
-
-    if (n.data("explanationStep") !== null && n.data("explanationStep") !== undefined) {
-      html += `<b>Explanation event:</b> step ${n.data("explanationStep")}`;
-      if (n.data("explanationType")) html += ` (${n.data("explanationType")})`;
-      html += `<br>`;
-    }
-
-    if (n.data("closedStep") !== null && n.data("closedStep") !== undefined) {
-      html += `<b>Closed:</b> step ${n.data("closedStep")}`;
-      if (n.data("closedType")) html += ` (${n.data("closedType")})`;
-      html += `<br>`;
     }
 
     if (isVisualRootNode(n) && state.currentTree?.algorithm === "MHS_MXP") {
