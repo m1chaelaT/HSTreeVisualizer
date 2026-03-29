@@ -14,9 +14,9 @@
     stepData: null
   };
 
-  function toggleMode() {
+  function applyMode(isStepMode) {
     const state = window.HSApp.state;
-    state.stepMode = !state.stepMode;
+    state.stepMode = isStepMode;
 
     window.HSApp.ui.updateModeUi();
 
@@ -35,6 +35,26 @@
     window.HSApp.ui.bindUiEvents();
     window.HSApp.stepMode.bindStepEvents();
 
-    document.getElementById("modeToggleBtn").addEventListener("click", toggleMode);
+    const treeModeRadio = document.getElementById("treeModeRadio");
+    const stepModeRadio = document.getElementById("stepModeRadio");
+
+    if (treeModeRadio) {
+      treeModeRadio.addEventListener("change", () => {
+        if (treeModeRadio.checked) {
+          applyMode(false);
+        }
+      });
+    }
+
+    if (stepModeRadio) {
+      stepModeRadio.addEventListener("change", () => {
+        if (stepModeRadio.checked) {
+          applyMode(true);
+        }
+      });
+    }
+
+    // nastav UI podľa default checked inputu
+    applyMode(stepModeRadio && stepModeRadio.checked);
   });
 })();

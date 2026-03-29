@@ -60,7 +60,7 @@
 
   function updateStepDescription() {
     const state = window.HSApp.state;
-    const bar = document.getElementById("stepDescriptionBar");
+    const bar = document.getElementById("stepInlineDescription");
 
     if (!bar) return;
 

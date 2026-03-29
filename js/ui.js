@@ -46,6 +46,14 @@
 
   function handleFile(event) {
     const file = event.target.files[0];
+
+    const fileName = file?.name || "No file selected";
+    const fileNameSpan = document.getElementById("fileName");
+    if (fileNameSpan) {
+      fileNameSpan.textContent = fileName;
+      fileNameSpan.title = fileName;
+    }
+
     if (!file) return;
 
     const reader = new FileReader();
@@ -100,19 +108,24 @@
     const state = window.HSApp.state;
     const treeToolbar = document.getElementById("treeToolbar");
     const stepToolbar = document.getElementById("stepToolbar");
-    const btn = document.getElementById("modeToggleBtn");
-    const stepDescriptionBar = document.getElementById("stepDescriptionBar");
+    const stepDescriptionBar = document.getElementById("stepInlineDescription");
+    const treeModeRadio = document.getElementById("treeModeRadio");
+    const stepModeRadio = document.getElementById("stepModeRadio");
 
     if (state.stepMode) {
       treeToolbar.style.display = "none";
       stepToolbar.style.display = "flex";
-      btn.textContent = "Switch to Tree Mode";
-      stepDescriptionBar.style.display = "block";
+      //stepDescriptionBar.style.display = "block";
+
+      if (stepModeRadio) stepModeRadio.checked = true;
+      if (treeModeRadio) treeModeRadio.checked = false;
     } else {
       treeToolbar.style.display = "flex";
       stepToolbar.style.display = "none";
-      btn.textContent = "Switch to Step Mode";
-      stepDescriptionBar.style.display = "none";
+      //stepDescriptionBar.style.display = "none";
+
+      if (treeModeRadio) treeModeRadio.checked = true;
+      if (stepModeRadio) stepModeRadio.checked = false;
     }
   }
 

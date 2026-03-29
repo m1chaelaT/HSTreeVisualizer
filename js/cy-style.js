@@ -95,8 +95,28 @@
           "text-background-shape": "roundrectangle"
         }
       },
+
+      // pôvodné úplné schovanie môžeš nechať pre tree mode alebo iné časti appky
       {
         selector: ".hidden",
+        style: {
+          display: "none"
+        }
+      },
+
+      // pre step mode: node ostane na plátne, ale nebude viditeľný
+      {
+        selector: ".step-node-hidden",
+        style: {
+          opacity: 0,
+          "text-opacity": 0,
+          events: "no"
+        }
+      },
+
+      // pre step mode: edge sa úplne skryje
+      {
+        selector: ".step-edge-hidden",
         style: {
           display: "none"
         }
