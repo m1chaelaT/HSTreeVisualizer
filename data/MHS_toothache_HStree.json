@@ -31,11 +31,11 @@
     },
     "closed" : {
       "closed" : true,
-      "step" : 21,
+      "step" : 18,
       "type" : "CLOSING_NODE"
     },
     "created" : {
-      "step" : 2,
+      "step" : 3,
       "type" : "NODE_CREATED"
     },
     "processed" : {
@@ -49,12 +49,12 @@
     "label" : [ "DentalTrauma(john)" ],
     "isExplanation" : {
       "isExplanation" : true,
-      "step" : 4,
+      "step" : 5,
       "type" : "POSSIBLE_EXPLANATION"
     },
     "closed" : {
       "closed" : true,
-      "step" : 5,
+      "step" : 6,
       "type" : "CLOSING_NODE"
     }
   }, {
@@ -69,7 +69,7 @@
       "closed" : false
     },
     "created" : {
-      "step" : 8,
+      "step" : 9,
       "type" : "NODE_CREATED"
     },
     "processed" : {
@@ -88,11 +88,11 @@
       "closed" : false
     },
     "created" : {
-      "step" : 10,
+      "step" : 11,
       "type" : "NODE_CREATED"
     },
     "processed" : {
-      "step" : 25,
+      "step" : 27,
       "type" : "PROCESSING_NODE"
     }
   }, {
@@ -102,12 +102,12 @@
     "label" : [ "DrankColdDrink(john)", "Cavity(john)" ],
     "isExplanation" : {
       "isExplanation" : true,
-      "step" : 14,
+      "step" : 16,
       "type" : "POSSIBLE_EXPLANATION"
     },
     "closed" : {
       "closed" : true,
-      "step" : 15,
+      "step" : 17,
       "type" : "CLOSING_NODE"
     }
   }, {
@@ -117,12 +117,12 @@
     "label" : [ "DrankColdDrink(john)", "SensitiveTeeth(john)" ],
     "isExplanation" : {
       "isExplanation" : true,
-      "step" : 18,
+      "step" : 20,
       "type" : "POSSIBLE_EXPLANATION"
     },
     "closed" : {
       "closed" : true,
-      "step" : 19,
+      "step" : 21,
       "type" : "CLOSING_NODE"
     }
   } ],
@@ -131,7 +131,7 @@
     "child" : 1,
     "label" : "DrankColdDrink(john)",
     "created" : {
-      "step" : 3,
+      "step" : 2,
       "type" : "EDGE_CREATED"
     },
     "pruned" : {
@@ -142,7 +142,7 @@
     "child" : 2,
     "label" : "DentalTrauma(john)",
     "created" : {
-      "step" : 6,
+      "step" : 4,
       "type" : "EDGE_CREATED"
     },
     "pruned" : {
@@ -153,7 +153,7 @@
     "child" : 3,
     "label" : "Cavity(john)",
     "created" : {
-      "step" : 9,
+      "step" : 8,
       "type" : "EDGE_CREATED"
     },
     "pruned" : {
@@ -164,7 +164,7 @@
     "child" : 4,
     "label" : "SensitiveTeeth(john)",
     "created" : {
-      "step" : 11,
+      "step" : 10,
       "type" : "EDGE_CREATED"
     },
     "pruned" : {
@@ -174,9 +174,13 @@
     "parent" : 1,
     "child" : null,
     "label" : "DentalTrauma(john)",
+    "created" : {
+      "step" : 13,
+      "type" : "EDGE_CREATED"
+    },
     "pruned" : {
       "pruned" : "NON-MINIMAL EXPLANATION!",
-      "step" : 13,
+      "step" : 14,
       "type" : "NONMINIMAL_EXPLANATION"
     }
   }, {
@@ -184,7 +188,7 @@
     "child" : 5,
     "label" : "Cavity(john)",
     "created" : {
-      "step" : 16,
+      "step" : 15,
       "type" : "EDGE_CREATED"
     },
     "pruned" : {
@@ -195,7 +199,7 @@
     "child" : 6,
     "label" : "SensitiveTeeth(john)",
     "created" : {
-      "step" : 20,
+      "step" : 19,
       "type" : "EDGE_CREATED"
     },
     "pruned" : {
@@ -205,36 +209,52 @@
     "parent" : 3,
     "child" : null,
     "label" : "DrankColdDrink(john)",
+    "created" : {
+      "step" : 23,
+      "type" : "EDGE_CREATED"
+    },
     "pruned" : {
       "pruned" : "PRUNED PATH!",
-      "step" : 23,
+      "step" : 24,
       "type" : "EDGE_PRUNED"
     }
   }, {
     "parent" : 3,
     "child" : null,
     "label" : "DentalTrauma(john)",
+    "created" : {
+      "step" : 25,
+      "type" : "EDGE_CREATED"
+    },
     "pruned" : {
       "pruned" : "NON-MINIMAL EXPLANATION!",
-      "step" : 24,
+      "step" : 26,
       "type" : "NONMINIMAL_EXPLANATION"
     }
   }, {
     "parent" : 4,
     "child" : null,
     "label" : "DrankColdDrink(john)",
+    "created" : {
+      "step" : 28,
+      "type" : "EDGE_CREATED"
+    },
     "pruned" : {
       "pruned" : "PRUNED PATH!",
-      "step" : 26,
+      "step" : 29,
       "type" : "EDGE_PRUNED"
     }
   }, {
     "parent" : 4,
     "child" : null,
     "label" : "DentalTrauma(john)",
+    "created" : {
+      "step" : 30,
+      "type" : "EDGE_CREATED"
+    },
     "pruned" : {
       "pruned" : "NON-MINIMAL EXPLANATION!",
-      "step" : 27,
+      "step" : 31,
       "type" : "NONMINIMAL_EXPLANATION"
     }
   } ]

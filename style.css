@@ -342,7 +342,7 @@ button:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 340px;
+  max-width: 600px;
 }
 
 /* ---------- CANVAS CONTROLS ---------- */

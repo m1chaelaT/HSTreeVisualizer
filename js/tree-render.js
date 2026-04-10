@@ -1,12 +1,25 @@
 (function () {
+  /*
   const DEFAULT_LAYOUT = {
     name: "dagre",
     rankDir: "TB",
-    nodeSep: 50,
-    edgeSep: 10,
+    nodeSep: 20,
+    edgeSep: 50,
     rankSep: 100,
-    padding: 30
-  };
+    padding: 10
+  };*/
+  
+  
+  
+  const DEFAULT_LAYOUT = {
+  name: "breadthfirst",
+  directed: true,
+  spacingFactor: 0.7,
+  padding: 10,
+  animate: false,
+  grid: true
+};
+
 
   function getState() {
     return window.HSApp.state;
@@ -89,6 +102,15 @@
 
     return state.cy;
   }
+
+  function rerunLayout() {
+  const state = getState();
+  if (!state.cy) return;
+
+  state.cy.layout({
+    ...DEFAULT_LAYOUT
+  }).run();
+}
 
   function buildTreeElements(tree, stepLimit = null) {
     const elements = [];
@@ -261,11 +283,11 @@
 
     let html =
       `<h3>Node Information</h3>` +
-      `<b>ID:</b> ${n.id()}<br>` +
-      `<b>Label:</b><br>${String(n.data("originalLabel") || "").replace(/\n/g, "<br>")}<br><br>` +
-      `<b>Closed:</b> ${n.data("closedFinal") === true ? "true" : "false"}<br>` +
+      `<b>ID:</b>${n.id()}` +
+      `<b>Label:</b>${String(n.data("originalLabel") || "").replace(/\n/g, "<br>")}<br>` +
+      `<b>Closed:</b>${n.data("closedFinal") === true ? "true" : "false"}<br>` +
       `<b>Explanation:</b> ${n.data("isExplanationFinal") === true ? "true" : "false"}<br>` +
-      `<b>Depth:</b> ${n.data("depth")}<br>`;
+      `<b>Depth:</b>${n.data("depth")}<br>`;
 
     const path = n.data("path");
     if (Array.isArray(path) && path.length > 0) {
@@ -402,6 +424,7 @@
     });
 
     reapplySpecialVisibility();
+    rerunLayout()
   }
 
   function showFullTree() {
@@ -413,6 +436,7 @@
     state.cy.edges().removeClass("hidden");
 
     reapplySpecialVisibility();
+    rerunLayout()
   }
 
   function toggleInitialMxpExplanations() {
@@ -461,6 +485,7 @@
     }
 
     state.showingPruned = !state.showingPruned;
+    rerunLayout()
   }
 
   function toggleLabels() {
@@ -490,6 +515,7 @@
     }
 
     state.showingIndex = !state.showingIndex;
+    rerunLayout()
   }
 
   function centerCanvas() {

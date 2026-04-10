@@ -89,6 +89,7 @@
           "target-arrow-shape": "triangle",
           "arrow-scale": 1.2,
           "font-size": "9px",
+          "text-rotation": "autorotate",
           "text-background-color": "#ffffff",
           "text-background-opacity": 1,
           "text-background-padding": "2px",

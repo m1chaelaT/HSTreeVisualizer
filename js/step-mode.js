@@ -26,37 +26,70 @@
     return eventObj.type || null;
   }
 
-  function getStepEventType(step) {
-    const state = window.HSApp.state;
-    const treeData = state.stepData;
+  function getStepEvent(step) {
+    const { stepData } = window.HSApp.state;
 
-    if (!treeData) return "No step data loaded";
-    if (step === 0) return "INITIAL_STATE";
+    if (!stepData) return { type: "NO_STEP_DATA" };
+    if (step === 0) return { type: "INITIAL_STATE" };
 
-    for (const node of treeData.nodes) {
-      const createdType = eventTypeAt(node.created, step);
-      if (createdType) return createdType;
+    for (const node of stepData.nodes) {
+      let type = eventTypeAt(node.created, step);
+      if (type) return { type, node };
 
-      const processedType = eventTypeAt(node.processed, step);
-      if (processedType) return processedType;
+      type = eventTypeAt(node.processed, step);
+      if (type) return { type, node };
 
-      const closedType = eventTypeAt(node.closed, step);
-      if (closedType) return closedType;
+      type = eventTypeAt(node.closed, step);
+      if (type) return { type, node };
 
-      const explanationType = eventTypeAt(node.isExplanation, step);
-      if (explanationType) return explanationType;
+      type = eventTypeAt(node.isExplanation, step);
+      if (type) return { type, node };
     }
 
-    for (const edge of treeData.edges) {
-      const createdType = eventTypeAt(edge.created, step);
-      if (createdType) return createdType;
+    for (const edge of stepData.edges) {
+      let type = eventTypeAt(edge.created, step);
+      if (type) return { type, edge };
 
-      const prunedType = eventTypeAt(edge.pruned, step);
-      if (prunedType) return prunedType;
+      type = eventTypeAt(edge.pruned, step);
+      if (type) return { type, edge };
     }
 
-    return `STEP_${step}`;
+    return { type: `STEP_${step}` };
   }
+
+  function formatStepDescription(event) {
+    if (!event) return "";
+
+    const { type, node, edge } = event;
+
+    switch (type) {
+      case "INITIAL_STATE":
+        return "Start of algorithm";
+
+      case "NODE_CREATED":
+        return `CREATE NODE: ${node.label.join(", ")}`;
+
+      case "PROCESSING_NODE":
+        return `PROCESSING NODE: ${node.label.join(", ")}`;
+
+      case "CLOSING_NODE":
+        return `CLOSE NODE: ${node.label.join(", ")}`;
+
+      case "POSSIBLE_EXPLANATION":
+        return `EXPLANATION FOUND: ${node.label.join(", ")}`;
+
+      case "EDGE_CREATED":
+        return `CREATE EDGE: ${edge.label || edge.from + " → " + edge.to}`;
+
+      case "EDGE_PRUNED":
+        return `PRUNE EDGE: ${edge.label}`;
+      case "NONMINIMAL_EXPLANATION":
+        return `NONMINIMAL EXPLANATION: ${node.label.join(", ")} xxx  ${edge.label || edge.from + " → " + edge.to}`
+      default:
+        return type + "not defined";
+    }
+  }
+  
 
   function updateStepDescription() {
     const state = window.HSApp.state;
@@ -64,7 +97,8 @@
 
     if (!bar) return;
 
-    bar.textContent = getStepEventType(state.currentStep);
+    const event = getStepEvent(state.currentStep);
+    bar.textContent = `${formatStepDescription(event)}`;
   }
 
   function initStepMode(treeData) {
@@ -174,13 +208,32 @@
     }
   }
 
+  function shouldKeepNodeAsPlaceholder(node, step) {
+  if (node.hasClass("pruned")) {
+    const prunedStep = node.data("prunedStep");
+    if (prunedStep !== null && prunedStep !== undefined && prunedStep > step) {
+      return node.incomers("edge").some(edge => isEdgeVisibleAtStep(edge, step));
+    }
+  }
+
+  return node.incomers("edge").some(edge => isEdgeVisibleAtStep(edge, step));
+}
+
   function applyStepVisibility(step) {
     const state = window.HSApp.state;
     if (!state.cy) return;
 
     state.cy.nodes().forEach(node => {
-      if (isNodeVisibleAtStep(node, step)) {
-        node.removeClass("hidden");
+      const visible = isNodeVisibleAtStep(node, step);
+      const placeholder = !visible && shouldKeepNodeAsPlaceholder(node, step);
+
+      node.removeClass("hidden");
+      node.removeClass("step-node-hidden");
+
+      if (visible) {
+        // normálne viditeľný node
+      } else if (placeholder) {
+        node.addClass("step-node-hidden");
       } else {
         node.addClass("hidden");
       }
@@ -190,13 +243,14 @@
 
     state.cy.edges().forEach(edge => {
       const sourceVisible = !edge.source().hasClass("hidden");
-      const targetVisible = !edge.target().hasClass("hidden");
       const edgeVisible = isEdgeVisibleAtStep(edge, step);
 
-      if (edgeVisible && sourceVisible && targetVisible) {
-        edge.removeClass("hidden");
+      edge.removeClass("step-edge-hidden");
+
+      if (edgeVisible && sourceVisible) {
+        // edge zobraz
       } else {
-        edge.addClass("hidden");
+        edge.addClass("step-edge-hidden");
       }
     });
   }
@@ -264,7 +318,7 @@ window.HSApp.stepMode = {
   stepBack,
   updateStepCounter,
   updateStepDescription,
-  getStepEventType,
+  getStepEvent,
   bindStepEvents
 };
 })();
