@@ -52,6 +52,7 @@ The visualizer accepts a structured JSON file describing a HS-tree.
 - **edges** – list of edges between nodes  
 
 Note: The `algorithm` and `ontology` fields are not required for generating the HS-tree structure. They are used only for displaying additional information in the application.
+
 ---
 
 ## Nodes
