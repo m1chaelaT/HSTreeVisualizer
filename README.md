@@ -1,15 +1,14 @@
 # HS Tree Visualizer
 
-HS Tree Visualizer is a web-based tool for visualizing HS-trees generated in abductive reasoning tasks.  
-It supports both static rendering and step-by-step replay of the tree construction process.
+HS Tree Visualizer is a web-based tool for visualizing HS-trees used in abductive reasoning.  
+It supports both static rendering and step-by-step replay of the tree construction.
 This project was developed as part of a Bachelor's thesis at the Faculty of Mathematics, Physics and Informatics, Comenius University in Bratislava.
 
 ---
 
 ## How to Use
 
-The application is available online at:  
-https://m1chaelat.github.io/HSTreeVisualizer/
+The application is available online at:  https://m1chaelat.github.io/HSTreeVisualizer/
 
 1. Open the application in a web browser  
 2. Upload a JSON file describing an HS-tree  
@@ -26,7 +25,7 @@ Additional controls allow toggling labels, pruned branches, and navigating betwe
 
 ## Input JSON file
 
-The visualizer accepts a structured JSON file describing a HS-tree.
+The visualizer takes a JSON file describing an HS-tree as input.
 
 ### Required Structure
 
@@ -172,7 +171,7 @@ Example (pruned edge):
 
 ## Step Mode
 
-Step mode reconstructs the execution of the algorithm using event metadata stored in nodes and edges.
+Step mode shows how the tree was built using event data stored in nodes and edges.
 
 ### Event Types
 
@@ -196,13 +195,13 @@ Each event may contain a `step` field:
 - `step` is an integer  
 - it defines the order of events during visualization  
 
-Correct and consistent step ordering is required for proper step-by-step playback.
+Step values must be consistent for correct step-by-step playback.
 
 
 
 ## Purpose
 
-The tool is intended for:
+The tool can be used for:
 
 - visualization of HS-tree algorithms  
 - analysis of abduction processes  
