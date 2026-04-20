@@ -9,6 +9,7 @@
       infoPanel.classList.toggle("open");
     }
   }
+  
 
   function setInfoPanelHtml(html) {
     const infoContent = document.getElementById("infoContent");
@@ -76,6 +77,33 @@
     reader.readAsText(file);
   }
 
+    function updateMaxDepth() {
+    const input = document.getElementById("maxDepthInput");
+    const state = window.HSApp.state;
+    if (!input) return;
+
+    const raw = input.value.trim();
+
+    if (raw === "") {
+      state.maxVisibleDepth = null;
+    } else {
+      const parsed = Number(raw);
+
+      if (!Number.isInteger(parsed) || parsed < 0) {
+        input.value = state.maxVisibleDepth ?? "";
+        return;
+      }
+
+      state.maxVisibleDepth = parsed;
+    }
+
+    if (state.stepMode) {
+      window.HSApp.stepMode.renderCurrentStep();
+    } else {
+      window.HSApp.treeRender.rebuildTreeFromState();
+    }
+  }
+
   function bindUiEvents() {
     const mxpBtn = document.getElementById("MXPExplenationsBtn");
     const prunedBtn = document.getElementById("prunnedUpdBtn");
@@ -91,6 +119,17 @@
       stepInfoBtn.addEventListener("click", () => toggleInfoPanel());
     }
 
+    const helpBtn = document.getElementById("helpBtn");
+
+    if (helpBtn) {
+      helpBtn.addEventListener("click", () => {
+        window.open(
+          "https://github.com/m1chaelaT/HSTreeVisualizer/blob/main/README.md",
+          "_blank"
+        );
+      });
+    }
+
     if (mxpBtn) mxpBtn.addEventListener("click", window.HSApp.treeRender.toggleInitialMxpExplanations);
     if (prunedBtn) prunedBtn.addEventListener("click", window.HSApp.treeRender.togglePrunedNodes);
     if (labelBtn) labelBtn.addEventListener("click", window.HSApp.treeRender.toggleLabels);
@@ -98,6 +137,11 @@
     document.getElementById("centerCanvas").addEventListener("click", window.HSApp.treeRender.centerCanvas);
     document.getElementById("zoomIn").addEventListener("click", window.HSApp.treeRender.zoomIn);
     document.getElementById("zoomOut").addEventListener("click", window.HSApp.treeRender.zoomOut);
+
+        const maxDepthInput = document.getElementById("maxDepthInput");
+    if (maxDepthInput) {
+      maxDepthInput.addEventListener("change", updateMaxDepth);
+    }
 
     document.addEventListener("contextmenu", e => {
       if (e.target.closest("#cy")) e.preventDefault();
@@ -130,11 +174,12 @@
   }
 
   window.HSApp = window.HSApp || {};
-  window.HSApp.ui = {
+    window.HSApp.ui = {
     toggleInfoPanel,
     setInfoPanelHtml,
     setOntologyContent,
     handleFile,
+    updateMaxDepth,
     bindUiEvents,
     updateModeUi
   };

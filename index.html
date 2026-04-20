@@ -9,8 +9,8 @@
   <script src="https://unpkg.com/dagre/dist/dagre.min.js"></script>
   <script src="https://unpkg.com/cytoscape-dagre/cytoscape-dagre.js"></script>
 
-  <script src="https://unpkg.com/elkjs/lib/elk.bundled.js"></script>
-<script src="https://unpkg.com/cytoscape-elk/cytoscape-elk.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/elkjs@0.9.3/lib/elk.bundled.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cytoscape-elk@2.3.0/dist/cytoscape-elk.js"></script>
 
 </head>
 <body>
@@ -21,6 +21,8 @@
     <div class="brand-title">HS Tree Visualizer</div>
     <div class="brand-subtitle">Abductive reasoning visualization</div>
   </div>
+
+  <button id="helpBtn">Help</button>
 
   <div class="spacer"></div>
 
@@ -100,10 +102,18 @@
   <button id="zoomIn">+</button>
   <button id="zoomOut">-</button>
 </div>
+
+<div class="depthControl">
+    <label for="maxDepthInput">Max depth</label>
+    <input type="number" id="maxDepthInput" min="0" step="1" placeholder="all" />
+  </div>
+</div>
+
   <script src="js/cy-style.js" defer></script>
   <script src="js/tree-render.js" defer></script>
   <script src="js/ui.js" defer></script>
   <script src="js/step-mode.js" defer></script>
   <script src="js/app.js" defer></script>
+  
 </body>
 </html>

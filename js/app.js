@@ -2,17 +2,18 @@
   window.HSApp = window.HSApp || {};
 
   window.HSApp.state = {
-    cy: null,
-    explanationFilterActive: false,
-    currentTree: null,
-    showingInitialMxpNodes: true,
-    showingPruned: true,
-    showingIndex: false,
-    stepMode: false,
-    currentStep: 0,
-    maxStep: 0,
-    stepData: null
-  };
+  cy: null,
+  explanationFilterActive: false,
+  currentTree: null,
+  showingInitialMxpNodes: true,
+  showingPruned: true,
+  showingIndex: false,
+  stepMode: false,
+  currentStep: 0,
+  maxStep: 0,
+  stepData: null,
+  maxVisibleDepth: null
+};
 
   function applyMode(isStepMode) {
     const state = window.HSApp.state;

@@ -1,5 +1,5 @@
-(function () {
-  /*
+  /*(function () {
+
   const DEFAULT_LAYOUT = {
     name: "dagre",
     rankDir: "TB",
@@ -10,7 +10,7 @@
   };*/
   
   
-  
+  /*
   const DEFAULT_LAYOUT = {
   name: "breadthfirst",
   directed: true,
@@ -18,8 +18,45 @@
   padding: 10,
   animate: false,
   grid: true
-};
+  };
+  
+ const DEFAULT_LAYOUT = {
+  name: "breadthfirst",
+  directed: true,
+  circle: false,
+  grid: false,
+  spacingFactor: 0.9,
+  padding: 30,
+  animate: false,
+  fit: true,
+  avoidOverlap: true,
+  roots: "#n0"
 
+};*/
+(function () {
+  
+  /*
+    const DEFAULT_LAYOUT = {
+    name: "dagre",
+    rankDir: "TB",
+    nodeSep: 20,
+    edgeSep: 50,
+    rankSep: 100,
+    padding: 10
+  };*/
+  const DEFAULT_LAYOUT = {
+  name: "elk",
+  fit: true,
+  padding: 30,
+  animate: false,
+  nodeDimensionsIncludeLabels: true,
+  elk: {
+    algorithm: "mrtree",
+    "elk.direction": "DOWN",
+    "elk.spacing.nodeNode": "30",
+    "elk.layered.spacing.nodeNodeBetweenLayers": "150"
+  }
+};
 
   function getState() {
     return window.HSApp.state;
@@ -88,6 +125,17 @@
     return Array.isArray(label) ? label.join("\n") : String(label ?? "");
   }
 
+    function isNodeAllowedByDepth(nodeData, maxDepth) {
+    if (maxDepth === null || maxDepth === undefined) return true;
+
+    const depth = Number(nodeData.depth ?? 0);
+
+    // root nech je vždy viditeľný
+    if (nodeData.id === 0) return true;
+
+    return depth <= maxDepth;
+  }
+
   function createCy(elements, layoutConfig = null) {
     const state = getState();
 
@@ -104,13 +152,13 @@
   }
 
   function rerunLayout() {
-  const state = getState();
-  if (!state.cy) return;
+    const state = getState();
+    if (!state.cy) return;
 
-  state.cy.layout({
-    ...DEFAULT_LAYOUT
-  }).run();
-}
+    state.cy.layout({
+      ...DEFAULT_LAYOUT
+    }).run();
+  }
 
   function buildTreeElements(tree, stepLimit = null) {
     const elements = [];
@@ -263,6 +311,120 @@
     return elements;
   }
 
+  function getExplanationPathIdsFromTree(tree) {
+    const included = new Set();
+    const parentByChild = new Map();
+
+    tree.edges.forEach(e => {
+      if (e.child !== null && e.child !== undefined) {
+        parentByChild.set(e.child, e.parent);
+      }
+    });
+
+    tree.nodes.forEach(node => {
+      if (!readExplanationValue(node.isExplanation)) return;
+
+      let current = node.id;
+      while (current !== null && current !== undefined && !included.has(current)) {
+        included.add(current);
+        current = parentByChild.get(current);
+      }
+    });
+
+    return included;
+  }
+
+  function buildTreeElementsForCurrentState(tree) {
+    const state = getState();
+
+    let elements = buildTreeElements(tree, null);
+
+    const explanationPathIds = state.explanationFilterActive
+      ? getExplanationPathIdsFromTree(tree)
+      : null;
+
+    if (
+      state.explanationFilterActive ||
+      !state.showingPruned ||
+      !state.showingInitialMxpNodes ||
+      state.showingIndex ||
+      state.maxVisibleDepth !== null
+    ) {
+      const filtered = [];
+      const keptNodeIds = new Set();
+
+      elements.forEach(el => {
+        const data = el.data || {};
+        const classes = (el.classes || "").split(" ").filter(Boolean);
+        const isNode = data.id && !data.source && !data.target;
+
+        if (!isNode) return;
+
+        const isPruned = classes.includes("pruned");
+        const isInitialMxp = classes.includes("initial-mxp");
+        const originalId = data.originalId;
+        const maxDepth = state.maxVisibleDepth;
+
+                if (!isPruned && !isNodeAllowedByDepth({ id: originalId, depth: data.depth }, maxDepth)) {
+          return;
+        }
+
+        if (!state.showingPruned && isPruned) return;
+        if (!state.showingInitialMxpNodes && isInitialMxp) return;
+
+        if (
+          state.explanationFilterActive &&
+          !isPruned &&
+          originalId !== undefined &&
+          !explanationPathIds.has(originalId)
+        ) {
+          return;
+        }
+
+        const cloned = {
+          ...el,
+          data: {
+            ...data,
+            label:
+              state.showingIndex &&
+              !isPruned &&
+              data.isExplanation !== true &&
+              !isInitialMxp
+                ? data.id
+                : data.originalLabel ?? data.label
+          }
+        };
+
+        filtered.push(cloned);
+        keptNodeIds.add(data.id);
+      });
+
+      elements.forEach(el => {
+        const data = el.data || {};
+        const isEdge = data.source && data.target;
+
+        if (!isEdge) return;
+        if (!keptNodeIds.has(data.source) || !keptNodeIds.has(data.target)) return;
+
+        filtered.push(el);
+      });
+
+      elements = filtered;
+    }
+
+    return elements;
+  }
+
+  function rebuildTreeFromState() {
+    const state = getState();
+    if (!state.currentTree) return;
+
+    const elements = buildTreeElementsForCurrentState(state.currentTree);
+    createCy(elements, DEFAULT_LAYOUT);
+    bindTreeInteractions();
+    window.HSApp.ui.setOntologyContent(state.currentTree);
+  }
+
   function renderNodeInfo(n) {
     const state = getState();
 
@@ -283,7 +445,7 @@
 
     let html =
       `<h3>Node Information</h3>` +
-      `<b>ID:</b>${n.id()}` +
+      `<b>ID:</b>${n.id()}<br>` +
       `<b>Label:</b>${String(n.data("originalLabel") || "").replace(/\n/g, "<br>")}<br>` +
       `<b>Closed:</b>${n.data("closedFinal") === true ? "true" : "false"}<br>` +
       `<b>Explanation:</b> ${n.data("isExplanationFinal") === true ? "true" : "false"}<br>` +
@@ -358,10 +520,7 @@
       }
     }
 
-    const elements = buildTreeElements(tree, null);
-    createCy(elements);
-    bindTreeInteractions();
-    window.HSApp.ui.setOntologyContent(tree);
+    rebuildTreeFromState();
   }
 
   function toggleChildren(node) {
@@ -373,6 +532,7 @@
     children.forEach(child => {
       toggleSubtree(child, shouldHide);
     });
+
   }
 
   function toggleSubtree(node, hide) {
@@ -410,112 +570,67 @@
 
   function showExplanations() {
     const state = getState();
-    if (!state.cy) return;
+    if (!state.currentTree) return;
 
     state.explanationFilterActive = true;
-
-    state.cy.nodes().addClass("hidden");
-    state.cy.edges().addClass("hidden");
-
-    state.cy.nodes(".explanation").forEach(n => {
-      n.removeClass("hidden");
-      n.predecessors().removeClass("hidden");
-      n.connectedEdges().removeClass("hidden");
-    });
-
-    reapplySpecialVisibility();
-    rerunLayout()
+    rebuildTreeFromState();
   }
 
   function showFullTree() {
     const state = getState();
-    if (!state.cy) return;
+    if (!state.currentTree) return;
 
     state.explanationFilterActive = false;
-    state.cy.nodes().removeClass("hidden");
-    state.cy.edges().removeClass("hidden");
-
-    reapplySpecialVisibility();
-    rerunLayout()
+    rebuildTreeFromState();
   }
 
   function toggleInitialMxpExplanations() {
     const state = getState();
-    if (!state.cy) return;
+    if (!state.currentTree) return;
 
     const mxpBtn = document.getElementById("MXPExplenationsBtn");
-    const mxpNodes = state.cy.nodes(".initial-mxp");
-
-    if (state.showingInitialMxpNodes) {
-      mxpNodes.forEach(node => {
-        node.addClass("hidden");
-        node.connectedEdges().addClass("hidden");
-      });
-      if (mxpBtn) mxpBtn.textContent = "Show initial MXP explenations";
-    } else {
-      mxpNodes.forEach(node => {
-        node.removeClass("hidden");
-        node.connectedEdges().removeClass("hidden");
-      });
-      if (mxpBtn) mxpBtn.textContent = "Hide initial MXP explenations";
-    }
 
     state.showingInitialMxpNodes = !state.showingInitialMxpNodes;
+
+    if (mxpBtn) {
+      mxpBtn.textContent = state.showingInitialMxpNodes
+        ? "Hide initial MXP explenations"
+        : "Show initial MXP explenations";
+    }
+
+    rebuildTreeFromState();
   }
 
   function togglePrunedNodes() {
     const state = getState();
-    if (!state.cy) return;
+    if (!state.currentTree) return;
 
     const prunedBtn = document.getElementById("prunnedUpdBtn");
-    const prunedNodes = state.cy.nodes(".pruned");
-
-    if (state.showingPruned) {
-      prunedNodes.forEach(node => {
-        node.addClass("hidden");
-        node.connectedEdges().addClass("hidden");
-      });
-      if (prunedBtn) prunedBtn.textContent = "Show pruned nodes";
-    } else {
-      prunedNodes.forEach(node => {
-        node.removeClass("hidden");
-        node.connectedEdges().removeClass("hidden");
-      });
-      if (prunedBtn) prunedBtn.textContent = "Hide pruned nodes";
-    }
 
     state.showingPruned = !state.showingPruned;
-    rerunLayout()
+
+    if (prunedBtn) {
+      prunedBtn.textContent = state.showingPruned
+        ? "Hide pruned nodes"
+        : "Show pruned nodes";
+    }
+
+    rebuildTreeFromState();
   }
 
   function toggleLabels() {
     const state = getState();
-    if (!state.cy) return;
+    if (!state.currentTree) return;
 
     const labelBtn = document.getElementById("labelUpdtBtn");
 
-    state.cy.nodes().forEach(node => {
-      if (
-        node.hasClass("pruned") ||
-        node.data("isExplanation") === true ||
-        node.hasClass("initial-mxp")
-      ) {
-        return;
-      }
-
-      if (state.showingIndex) {
-        node.data("label", node.data("originalLabel"));
-      } else {
-        node.data("label", node.id());
-      }
-    });
+    state.showingIndex = !state.showingIndex;
 
     if (labelBtn) {
-      labelBtn.textContent = state.showingIndex ? "Hide Labels" : "Show Labels";
+      labelBtn.textContent = state.showingIndex ? "Show Labels" : "Hide Labels";
     }
 
-    state.showingIndex = !state.showingIndex;
-    rerunLayout()
+    rebuildTreeFromState();
   }
 
   function centerCanvas() {
@@ -551,7 +666,10 @@
     readTypeValue,
     getNodeLabelText,
     createCy,
+    rerunLayout,
     buildTreeElements,
+    buildTreeElementsForCurrentState,
+    rebuildTreeFromState,
     renderNodeInfo,
     bindTreeInteractions,
     bindStepInteractions,

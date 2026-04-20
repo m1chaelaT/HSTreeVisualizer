@@ -374,3 +374,24 @@ button:hover {
   padding: 0 14px;
 }
 
+.depthControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+
+.depthControl label {
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.depthControl input {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+}
+

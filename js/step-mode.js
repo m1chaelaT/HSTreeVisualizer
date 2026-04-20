@@ -255,6 +255,33 @@
     });
   }
 
+  function focusCurrentStep() {
+  const state = window.HSApp.state;
+  if (!state.cy) return;
+
+  const event = getStepEvent(state.currentStep);
+  if (!event) return;
+
+  let target = null;
+
+  if (event.node) {
+    const { type, node, edge } = event;
+    if (type != "CLOSE_NODE" ){
+    target = state.cy.getElementById("n" + event.node.id);}
+  } else if (event.edge) {
+    if (event.edge.child !== null && event.edge.child !== undefined) {
+      target = state.cy.getElementById("n" + event.edge.child);
+    }
+  }
+
+  if (!target || target.empty()) return;
+
+  state.cy.animate({
+    center: { eles: target },
+    duration: 300
+  });
+}
+
   function renderCurrentStep() {
     const state = window.HSApp.state;
     if (!state.stepData || !state.cy) return;
@@ -262,6 +289,7 @@
     applyStepVisibility(state.currentStep);
     updateStepCounter();
     updateStepDescription();
+    focusCurrentStep();
   }
 
   function stepForward() {

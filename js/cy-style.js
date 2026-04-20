@@ -58,7 +58,7 @@
         }
       },
       {
-        selector: "node[closed = true]",
+        selector: "node[closed]",
         style: {
           "border-style": "dashed"
         }
