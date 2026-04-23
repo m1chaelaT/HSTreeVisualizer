@@ -34,29 +34,52 @@
 
 };*/
 (function () {
-  
-  /*
-    const DEFAULT_LAYOUT = {
+
+  const DAGRE_LAYOUT = {
     name: "dagre",
     rankDir: "TB",
     nodeSep: 20,
     edgeSep: 50,
     rankSep: 100,
     padding: 10
-  };*/
-  const DEFAULT_LAYOUT = {
-  name: "elk",
-  fit: true,
-  padding: 30,
-  animate: false,
-  nodeDimensionsIncludeLabels: true,
-  elk: {
-    algorithm: "mrtree",
-    "elk.direction": "DOWN",
-    "elk.spacing.nodeNode": "30",
-    "elk.layered.spacing.nodeNodeBetweenLayers": "150"
+  };
+  const ELK_LAYOUT = {
+    name: "elk",
+    fit: true,
+    padding: 30,
+    animate: false,
+    nodeDimensionsIncludeLabels: true,
+    elk: {
+      algorithm: "mrtree",
+      "elk.direction": "DOWN",
+      "elk.spacing.nodeNode": "30",
+      "elk.layered.spacing.nodeNodeBetweenLayers": "150"
+    }
+  };
+  const LAYOUT_NODE_THRESHOLD = 50;
+  function getLayoutForTree(tree) {
+    const nodeCount = Array.isArray(tree?.nodes) ? tree.nodes.length : 0;
+
+    if (nodeCount <= LAYOUT_NODE_THRESHOLD) {
+      return DAGRE_LAYOUT;
+    }
+
+    return ELK_LAYOUT;
   }
-};
+
+    const DEFAULT_LAYOUT = {
+    name: "elk",
+    fit: true,
+    padding: 30,
+    animate: false,
+    nodeDimensionsIncludeLabels: true,
+    elk: {
+      algorithm: "mrtree",
+      "elk.direction": "DOWN",
+      "elk.spacing.nodeNode": "30",
+      "elk.layered.spacing.nodeNodeBetweenLayers": "150"
+    }
+  };
 
   function getState() {
     return window.HSApp.state;
@@ -136,7 +159,7 @@
     return depth <= maxDepth;
   }
 
-  function createCy(elements, layoutConfig = null) {
+  function createCy(elements, layoutConfig) {
     const state = getState();
 
     if (state.cy) state.cy.destroy();
@@ -145,7 +168,7 @@
       container: document.getElementById("cy"),
       elements,
       style: window.HSApp.cyStyle.buildCyStyle(),
-      layout: layoutConfig || DEFAULT_LAYOUT
+      layout: layoutConfig
     });
 
     return state.cy;
@@ -420,7 +443,8 @@
     if (!state.currentTree) return;
 
     const elements = buildTreeElementsForCurrentState(state.currentTree);
-    createCy(elements, DEFAULT_LAYOUT);
+    const layoutToUse = getLayoutForTree(state.currentTree);
+    createCy(elements, layoutToUse);
     bindTreeInteractions();
     window.HSApp.ui.setOntologyContent(state.currentTree);
   }
@@ -656,7 +680,9 @@
 
   window.HSApp = window.HSApp || {};
   window.HSApp.treeRender = {
-    DEFAULT_LAYOUT,
+    DAGRE_LAYOUT,
+    ELK_LAYOUT,
+    getLayoutForTree,
     getInitialMxpExplanationNodes,
     isVisualRootNode,
     readExplanationValue,
