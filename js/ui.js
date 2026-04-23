@@ -25,19 +25,21 @@
     let content = `<h3>Ontology</h3>`;
 
     if (tree.algorithm) {
-      content += `<b>Algorithm:</b> ${tree.algorithm}<br><br>`;
+      content += `<div><b>Algorithm:</b> ${tree.algorithm}</div><br>`;
     }
 
     if (tree.ontology) {
-      const obsHTML = tree.ontology.observations && tree.ontology.observations.length > 0
-        ? `<b>Observations:</b><br>${tree.ontology.observations.join("<br>")}<br><br>`
-        : "";
+      // Observations
+      if (tree.ontology.observations && tree.ontology.observations.length > 0) {
+        content += `<div><b>Observations:</b></div>`;
+        content += `<div>${tree.ontology.observations.join("<br>")}</div><br>`;
+      }
 
-      const tboxHTML = tree.ontology.tbox && tree.ontology.tbox.length > 0
-        ? `<b>TBox:</b><br>` + tree.ontology.tbox.map(line => `• ${line}`).join("<br>")
-        : "";
-
-      content += obsHTML + tboxHTML;
+      // TBox
+      if (tree.ontology.tbox && tree.ontology.tbox.length > 0) {
+        content += `<div><b>TBox:</b></div>`;
+        content += `<div>` + tree.ontology.tbox.map(line => `• ${line}`).join("<br>") + `</div>`;
+      }
     } else {
       content += "No data.";
     }

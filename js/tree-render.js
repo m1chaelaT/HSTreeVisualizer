@@ -455,12 +455,12 @@
     if (n.hasClass("pruned")) {
       let html =
         `<h3>Pruned Node Information</h3>` +
-        `<b>ID:</b> ${n.id()}<br>` +
-        `<b>Edge label:</b><br> ${n.data("edgeLabel") || "-"}<br>` +
-        `<b>Reason:</b> ${n.data("pruned") || "-"}<br>`;
+        `<div><b>ID:</b> ${n.id()}</div>` +
+        `<div><b>Edge label:</b> ${n.data("edgeLabel") || "-"}</div>` +
+        `<div><b>Reason:</b> ${n.data("pruned") || "-"}</div>`;
 
       if (n.data("parentId") !== undefined) {
-        html += `<b>Parent:</b> n${n.data("parentId")}<br>`;
+        html += `<div><b>Parent:</b> n${n.data("parentId")}</div>`;
       }
 
       window.HSApp.ui.setInfoPanelHtml(html);
@@ -469,25 +469,25 @@
 
     let html =
       `<h3>Node Information</h3>` +
-      `<b>ID:</b>${n.id()}<br>` +
-      `<b>Label:</b>${String(n.data("originalLabel") || "").replace(/\n/g, "<br>")}<br>` +
-      `<b>Closed:</b>${n.data("closedFinal") === true ? "true" : "false"}<br>` +
-      `<b>Explanation:</b> ${n.data("isExplanationFinal") === true ? "true" : "false"}<br>` +
-      `<b>Depth:</b>${n.data("depth")}<br>`;
+      `<div><b>ID:</b> ${n.id()}</div>` +
+      `<div><b>Label:</b><br>${String(n.data("originalLabel") || "").replace(/\n/g, "<br>")}</div>` +
+      `<div><b>Closed:</b> ${n.data("closedFinal") === true ? "true" : "false"}</div>` +
+      `<div><b>Explanation:</b> ${n.data("isExplanationFinal") === true ? "true" : "false"}</div>` +
+      `<div><b>Depth:</b> ${n.data("depth")}</div>`;
 
     const path = n.data("path");
     if (Array.isArray(path) && path.length > 0) {
-      html += `<br><b>Path:</b><br>${path.join("<br>")}<br>`;
+      html += `<div style="margin-top:8px;"><b>Path:</b><br>${path.join("<br>")}</div>`;
     }
 
     if (isVisualRootNode(n) && state.currentTree?.algorithm === "MHS_MXP") {
       const mxpNodes = getInitialMxpExplanationNodes(state.currentTree);
 
       if (mxpNodes.length > 0) {
-        html += `<br><h4>Initial MXP possible explanations</h4>`;
+        html += `<h4>Initial MXP possible explanations</h4>`;
         mxpNodes.forEach(node => {
           const lbl = Array.isArray(node.label) ? node.label.join(", ") : String(node.label ?? "");
-          html += `• ${lbl}<br>`;
+          html += `<div>• ${lbl}</div>`;
         });
       }
     }

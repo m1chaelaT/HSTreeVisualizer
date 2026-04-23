@@ -109,7 +109,8 @@
 
     const elements = window.HSApp.treeRender.buildTreeElements(treeData, null);
 
-    window.HSApp.treeRender.createCy(elements, window.HSApp.treeRender.DEFAULT_LAYOUT);
+    const layoutToUse = window.HSApp.treeRender.getLayoutForTree(treeData);
+    window.HSApp.treeRender.createCy(elements, layoutToUse);
     window.HSApp.treeRender.bindStepInteractions();
     window.HSApp.ui.setOntologyContent(treeData);
 
