@@ -57,12 +57,7 @@
           "border-width": 2
         }
       },
-      {
-        selector: "node[closed]",
-        style: {
-          "border-style": "dashed"
-        }
-      },
+      
       {
         selector: "node.pruned",
         style: {
@@ -96,7 +91,12 @@
           "text-background-shape": "roundrectangle"
         }
       },
-
+            {
+        selector: "node[closed]",
+        style: {
+          "border-style": "dashed"
+        }
+      },
       // pôvodné úplné schovanie môžeš nechať pre tree mode alebo iné časti appky
       {
         selector: ".hidden",
@@ -120,6 +120,18 @@
         selector: ".step-edge-hidden",
         style: {
           display: "none"
+        }
+      },
+      {
+        selector: ".current-step-highlight",
+        style: {
+          "border-width": 2,
+          "border-color": "#ff9800",
+
+          "line-color": "#ff9800",
+          "target-arrow-color": "#ff9800",
+
+          "z-index": 999
         }
       }
     ];

@@ -154,21 +154,24 @@
     const state = window.HSApp.state;
     const treeToolbar = document.getElementById("treeToolbar");
     const stepToolbar = document.getElementById("stepToolbar");
-    const stepDescriptionBar = document.getElementById("stepInlineDescription");
     const treeModeRadio = document.getElementById("treeModeRadio");
     const stepModeRadio = document.getElementById("stepModeRadio");
+
+    const depthControl = document.querySelector(".depthControl");
 
     if (state.stepMode) {
       treeToolbar.style.display = "none";
       stepToolbar.style.display = "flex";
-      //stepDescriptionBar.style.display = "block";
+
+      if (depthControl) depthControl.style.display = "none"; 
 
       if (stepModeRadio) stepModeRadio.checked = true;
       if (treeModeRadio) treeModeRadio.checked = false;
     } else {
       treeToolbar.style.display = "flex";
       stepToolbar.style.display = "none";
-      //stepDescriptionBar.style.display = "none";
+
+      if (depthControl) depthControl.style.display = "flex";
 
       if (treeModeRadio) treeModeRadio.checked = true;
       if (stepModeRadio) stepModeRadio.checked = false;

@@ -163,6 +163,36 @@
     return createdStep !== null && createdStep !== undefined && createdStep <= step;
   }
 
+  function debugNodeStyle(node, label = "") {
+  console.group(`DEBUG NODE ${label}: ${node.id()}`);
+
+  console.log("classes:", node.classes());
+  console.log("data label:", node.data("label"));
+  console.log("originalLabel:", node.data("originalLabel"));
+  console.log("is explanation:", node.hasClass("explanation"));
+  console.log("is initial-mxp:", node.hasClass("initial-mxp"));
+  console.log("is hidden:", node.hasClass("hidden"));
+  console.log("is step-node-hidden:", node.hasClass("step-node-hidden"));
+
+  console.log("style label:", node.style("label"));
+  console.log("font-size:", node.style("font-size"));
+  console.log("font-weight:", node.style("font-weight"));
+  console.log("text-wrap:", node.style("text-wrap"));
+  console.log("text-max-width:", node.style("text-max-width"));
+  console.log("width style:", node.style("width"));
+  console.log("height style:", node.style("height"));
+  console.log("padding:", node.style("padding"));
+  console.log("border-width:", node.style("border-width"));
+
+  console.log("model width:", node.width());
+  console.log("model height:", node.height());
+  console.log("rendered width:", node.renderedWidth());
+  console.log("rendered height:", node.renderedHeight());
+  console.log("boundingBox:", node.boundingBox());
+
+  console.groupEnd();
+}
+
   function updateNodeStateForStep(node, step) {
     if (node.hasClass("pruned")) return;
 
@@ -189,7 +219,7 @@
     } else {
       node.removeClass("initial-mxp");
     }
-
+    /*
     const closedFinal = node.data("closedFinal") === true;
     const closedStep = node.data("closedStep");
 
@@ -200,8 +230,17 @@
       closedStep <= step;
 
     node.data("closed", closedVisible);
+    */
+    if (explanationVisible) {
+      node.data("label", "✓");
+      //debugNodeStyle(node, `after explanationVisible step ${step}`);
+      node.style("label");      // force Cytoscape style recalculation
+      node.boundingBox();
+      return;
+    }
 
     const state = window.HSApp.state;
+
     if (state.showingIndex) {
       node.data("label", node.id());
     } else {
@@ -240,6 +279,9 @@
       }
 
       updateNodeStateForStep(node, step);
+      if (node.hasClass("explanation")) {
+  //debugNodeStyle(node, `after applyStepVisibility step ${step}`);
+}
     });
 
     state.cy.edges().forEach(edge => {
@@ -257,31 +299,44 @@
   }
 
   function focusCurrentStep() {
-  const state = window.HSApp.state;
-  if (!state.cy) return;
+    const state = window.HSApp.state;
+    if (!state.cy) return;
 
-  const event = getStepEvent(state.currentStep);
-  if (!event) return;
+    state.cy.elements().removeClass("current-step-highlight");
 
-  let target = null;
+    const event = getStepEvent(state.currentStep);
+    if (!event) return;
 
-  if (event.node) {
-    const { type, node, edge } = event;
-    if (type != "CLOSE_NODE" ){
-    target = state.cy.getElementById("n" + event.node.id);}
-  } else if (event.edge) {
-    if (event.edge.child !== null && event.edge.child !== undefined) {
-      target = state.cy.getElementById("n" + event.edge.child);
+    let target = null;
+
+    if (event.node) {
+      const { type } = event;
+
+      if (type !== "CLOSE_NODE") {
+        target = state.cy.getElementById("n" + event.node.id);
+      }
+    } else if (event.edge) {
+      if (event.edge.child !== null && event.edge.child !== undefined) {
+        target = state.cy.getElementById("e" + event.edge.parent + "_" + event.edge.child);
+      } else {
+        const safeLabel = String(event.edge.label ?? "").replace(/[^a-zA-Z0-9_]/g, "_");
+        const prunedStep = window.HSApp.treeRender.readStepValue(event.edge.pruned);
+        const prunedNodeId = "p" + event.edge.parent + "_" + safeLabel + "_" + (prunedStep ?? "x");
+
+        target = state.cy.getElementById("e" + event.edge.parent + "_" + prunedNodeId);
+      }
     }
+
+    if (!target || target.empty()) return;
+
+    target.addClass("current-step-highlight");
+    target.style("label");      // force Cytoscape style recalculation
+  target.boundingBox();
+    state.cy.animate({
+      center: { eles: target },
+      duration: 300
+    });
   }
-
-  if (!target || target.empty()) return;
-
-  state.cy.animate({
-    center: { eles: target },
-    duration: 300
-  });
-}
 
   function renderCurrentStep() {
     const state = window.HSApp.state;
