@@ -12,7 +12,7 @@
   currentStep: 0,
   maxStep: 0,
   stepData: null,
-  maxVisibleDepth: null
+  maxVisibleDepth: null,
 };
 
   function applyMode(isStepMode) {

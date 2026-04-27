@@ -265,11 +265,16 @@
         classes: classes.join(" ")
       });
     });
-
+    const depthByNodeId = new Map();
+        tree.nodes.forEach(n => {
+          depthByNodeId.set(n.id, Number(n.depth ?? 0));
+        });
     tree.edges.forEach(e => {
       const prunedText = readPrunedText(e.pruned);
       const edgeCreatedStep = readStepValue(e.created);
       const prunedStep = readStepValue(e.pruned);
+
+      
 
       if (e.child !== null && e.child !== undefined) {
         const edgeVisible =
@@ -306,11 +311,14 @@
         elements.push({
           data: {
             id: prunedNodeId,
+            depth: (depthByNodeId.get(e.parent) ?? 0) + 1,
             label: "✗",
             originalLabel: prunedText || "PRUNED",
             parentId: e.parent,
             edgeLabel: String(e.label ?? ""),
             pruned: prunedText,
+            createdStep: edgeCreatedStep,
+            createdType: readTypeValue(e.created),
             prunedStep: prunedStep,
             prunedType: readTypeValue(e.pruned)
           },
@@ -324,6 +332,8 @@
             target: prunedNodeId,
             label: String(e.label ?? ""),
             pruned: prunedText,
+            createdStep: edgeCreatedStep,
+            createdType: readTypeValue(e.created),
             prunedStep: prunedStep,
             prunedType: readTypeValue(e.pruned)
           }
@@ -388,21 +398,27 @@
         const originalId = data.originalId;
         const maxDepth = state.maxVisibleDepth;
 
-                if (!isPruned && !isNodeAllowedByDepth({ id: originalId, depth: data.depth }, maxDepth)) {
-          return;
-        }
+        
+         if (maxDepth !== null) {
+  const depth = Number(data.depth ?? 0);
 
-        if (!state.showingPruned && isPruned) return;
-        if (!state.showingInitialMxpNodes && isInitialMxp) return;
+  if (depth > maxDepth) {
+    return;
+  }
+}
 
-        if (
-          state.explanationFilterActive &&
-          !isPruned &&
-          originalId !== undefined &&
-          !explanationPathIds.has(originalId)
-        ) {
-          return;
-        }
+       if (state.explanationFilterActive && isPruned) return;
+
+if (!state.showingPruned && isPruned) return;
+if (!state.showingInitialMxpNodes && isInitialMxp) return;
+
+if (
+  state.explanationFilterActive &&
+  originalId !== undefined &&
+  !explanationPathIds.has(originalId)
+) {
+  return;
+}
 
         const cloned = {
           ...el,
@@ -449,7 +465,7 @@
     window.HSApp.ui.setOntologyContent(state.currentTree);
   }
 
-  function renderNodeInfo(n) {
+  function renderNodeInfo(n, openPanel = true) {
     const state = getState();
 
     if (n.hasClass("pruned")) {
@@ -463,7 +479,7 @@
         html += `<div><b>Parent:</b> n${n.data("parentId")}</div>`;
       }
 
-      window.HSApp.ui.setInfoPanelHtml(html);
+      window.HSApp.ui.setInfoPanelHtml(html, openPanel);
       return;
     }
 
@@ -492,7 +508,7 @@
       }
     }
 
-    window.HSApp.ui.setInfoPanelHtml(html);
+    window.HSApp.ui.setInfoPanelHtml(html, openPanel);
   }
 
   function bindCommonRightClick() {

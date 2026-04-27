@@ -84,7 +84,12 @@
       case "EDGE_PRUNED":
         return `PRUNE EDGE: ${edge.label}`;
       case "NONMINIMAL_EXPLANATION":
-        return `NONMINIMAL EXPLANATION: ${node.label.join(", ")} xxx  ${edge.label || edge.from + " → " + edge.to}`
+        return `NON-MINIMAL EXPLANATION: ${edge.label}`;
+      case "INCONSISTENT_EXPLANATION":
+        return `INCONSISTENT EXPLANATION: ${edge.label}`;
+
+      case "IRELEVANT_EXPLANATION":
+        return `IRRELEVANT EXPLANATION: ${edge.label}`;
       default:
         return type + "not defined";
     }
@@ -126,7 +131,7 @@
   }
 
   const originalId = node.data("originalId");
-  if (originalId === 0) return true;
+  if (originalId === 0) return step >= 1;
 
   const createdStep = node.data("createdStep");
   if (createdStep !== null && createdStep !== undefined) {
@@ -152,16 +157,15 @@
 }
 
   function isEdgeVisibleAtStep(edge, step) {
-    const target = edge.target();
+  const createdStep = edge.data("createdStep");
 
-    if (target && target.length > 0 && target.hasClass("pruned")) {
-      const prunedStep = target.data("prunedStep");
-      return prunedStep !== null && prunedStep !== undefined && prunedStep <= step;
-    }
-
-    const createdStep = edge.data("createdStep");
-    return createdStep !== null && createdStep !== undefined && createdStep <= step;
+  if (createdStep !== null && createdStep !== undefined) {
+    return createdStep <= step;
   }
+
+  const prunedStep = edge.data("prunedStep");
+  return prunedStep !== null && prunedStep !== undefined && prunedStep <= step;
+}
 
   function debugNodeStyle(node, label = "") {
   console.group(`DEBUG NODE ${label}: ${node.id()}`);
@@ -286,15 +290,16 @@
 
     state.cy.edges().forEach(edge => {
       const sourceVisible = !edge.source().hasClass("hidden");
-      const edgeVisible = isEdgeVisibleAtStep(edge, step);
+const targetExists = !edge.target().hasClass("hidden");
+const edgeVisible = isEdgeVisibleAtStep(edge, step);
 
       edge.removeClass("step-edge-hidden");
 
-      if (edgeVisible && sourceVisible) {
-        // edge zobraz
-      } else {
-        edge.addClass("step-edge-hidden");
-      }
+      if (edgeVisible && sourceVisible && targetExists) {
+  // edge zobraz
+} else {
+  edge.addClass("step-edge-hidden");
+}
     });
   }
 
@@ -316,22 +321,42 @@
         target = state.cy.getElementById("n" + event.node.id);
       }
     } else if (event.edge) {
-      if (event.edge.child !== null && event.edge.child !== undefined) {
-        target = state.cy.getElementById("e" + event.edge.parent + "_" + event.edge.child);
-      } else {
-        const safeLabel = String(event.edge.label ?? "").replace(/[^a-zA-Z0-9_]/g, "_");
-        const prunedStep = window.HSApp.treeRender.readStepValue(event.edge.pruned);
-        const prunedNodeId = "p" + event.edge.parent + "_" + safeLabel + "_" + (prunedStep ?? "x");
+  if (event.edge.child !== null && event.edge.child !== undefined) {
+    // klasická hrana
+    target = state.cy.getElementById("e" + event.edge.parent + "_" + event.edge.child);
+  } else {
+    // pruned edge → máme aj pruned node
+    const safeLabel = String(event.edge.label ?? "").replace(/[^a-zA-Z0-9_]/g, "_");
+    const prunedStep = window.HSApp.treeRender.readStepValue(event.edge.pruned);
+    const prunedNodeId = "p" + event.edge.parent + "_" + safeLabel + "_" + (prunedStep ?? "x");
 
-        target = state.cy.getElementById("e" + event.edge.parent + "_" + prunedNodeId);
-      }
+    const PRUNED_EVENTS = [
+      "EDGE_PRUNED",
+      "INVALID_PATH",
+      "INCONSISTENT_EXPLANATION",
+      "IRELEVANT_EXPLANATION",
+      "NONMINIMAL_EXPLANATION"
+    ];
+
+    if (PRUNED_EVENTS.includes(event.type)) {
+      // highlight červený node
+      target = state.cy.getElementById(prunedNodeId);
+    } else {
+      // EDGE_CREATED → highlight hrana
+      target = state.cy.getElementById("e" + event.edge.parent + "_" + prunedNodeId);
     }
+  }
+}
 
     if (!target || target.empty()) return;
 
+    if (event.node && target.isNode()) {
+      window.HSApp.treeRender.renderNodeInfo(target, false);
+    }
+
     target.addClass("current-step-highlight");
     target.style("label");      // force Cytoscape style recalculation
-  target.boundingBox();
+    target.boundingBox();
     state.cy.animate({
       center: { eles: target },
       duration: 300
