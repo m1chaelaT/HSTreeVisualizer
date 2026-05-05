@@ -192,6 +192,18 @@ function setInfoPanelHtml(html, openPanel = true) {
       });
     }
 
+    // TEMPORARY feedback button 
+    const surveyBtn = document.getElementById("surveyBtn");
+
+    if (surveyBtn) {
+      surveyBtn.addEventListener("click", () => {
+        window.open(
+          "", //link
+          "_blank"
+        );
+      });
+    }
+
     if (mxpBtn) mxpBtn.addEventListener("click", window.HSApp.treeRender.toggleInitialMxpExplanations);
     if (prunedBtn) prunedBtn.addEventListener("click", window.HSApp.treeRender.togglePrunedNodes);
     if (labelBtn) labelBtn.addEventListener("click", window.HSApp.treeRender.toggleLabels);

@@ -181,6 +181,20 @@ button:hover {
 }
 
 
+/* TEMPORARY: Survey / dotazník button */
+#surveyBtn {
+  background: #2d3748;
+  color: #ffffff;
+  border-color: #1a202c;
+  font-weight: 700;
+}
+
+#surveyBtn:hover {
+  background: #1a202c;
+  border-color: #000000;
+  color: #ffffff;
+}
+
 /* highlight pre step tlačidlo */
 #stepForward {
   background: var(--primary);
