@@ -198,7 +198,7 @@ function setInfoPanelHtml(html, openPanel = true) {
     if (surveyBtn) {
       surveyBtn.addEventListener("click", () => {
         window.open(
-          "", //link
+          "https://docs.google.com/forms/d/e/1FAIpQLScHP5g1ptlO7b4ECI86uQH9ilzAg1lan69VNjBWPyNxPXUtWw/viewform?usp=dialog", //link
           "_blank"
         );
       });
