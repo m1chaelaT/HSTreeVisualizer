@@ -178,9 +178,8 @@
     const state = getState();
     if (!state.cy) return;
 
-    state.cy.layout({
-      ...DEFAULT_LAYOUT
-    }).run();
+    const layoutConfig = getLayoutForTree(state.currentTree);
+    state.cy.layout(layoutConfig).run();
   }
 
   function buildTreeElements(tree, stepLimit = null) {
@@ -573,6 +572,7 @@ if (
       toggleSubtree(child, shouldHide);
     });
 
+    rerunLayout();
   }
 
   function toggleSubtree(node, hide) {
