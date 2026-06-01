@@ -192,17 +192,7 @@ function setInfoPanelHtml(html, openPanel = true) {
       });
     }
 
-    // TEMPORARY feedback button 
-    const surveyBtn = document.getElementById("surveyBtn");
 
-    if (surveyBtn) {
-      surveyBtn.addEventListener("click", () => {
-        window.open(
-          "https://docs.google.com/forms/d/e/1FAIpQLScHP5g1ptlO7b4ECI86uQH9ilzAg1lan69VNjBWPyNxPXUtWw/viewform?usp=dialog", //link
-          "_blank"
-        );
-      });
-    }
 
     if (mxpBtn) mxpBtn.addEventListener("click", window.HSApp.treeRender.toggleInitialMxpExplanations);
     if (prunedBtn) prunedBtn.addEventListener("click", window.HSApp.treeRender.togglePrunedNodes);
