@@ -109,7 +109,6 @@ function setInfoPanelHtml(html, openPanel = true) {
         );
         return;
       }
-
       const state = window.HSApp.state;
 
       resetAppStateForNewFile();
